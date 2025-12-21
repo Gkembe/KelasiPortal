@@ -322,7 +322,7 @@ public class KelasiDB {
 
     //insert teacher 
     public static int insertTeacher(Connection conn, Teachers teacher)
-            throws SQLException, NamingException{
+            throws SQLException, NamingException {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -364,7 +364,7 @@ public class KelasiDB {
     }
 
     public static int insertUser(Connection conn, User user)
-            throws SQLException , NamingException{
+            throws SQLException, NamingException {
 
         PreparedStatement ps = null;
 
@@ -588,10 +588,8 @@ public class KelasiDB {
         return user;
 
     }
-    
-    
+
     //select teachers
-    
     public static LinkedHashMap<String, Teachers> selectAllTeachersByID(int schoolID) throws NamingException, SQLException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
@@ -619,9 +617,6 @@ public class KelasiDB {
             t.setHireDate(rs.getDate("hireDate").toLocalDate());
             t.setCreatedAT(rs.getTimestamp("createdAT").toLocalDateTime());
             t.setSchoolID(rs.getInt("schoolID"));
-            
-            
-            
 
             teacher.put("" + "" + t.getFirstName(), t);
         }
@@ -633,10 +628,8 @@ public class KelasiDB {
         return teacher;
 
     }
-    
-    
+
     //Students
-    
     public static boolean reistrationNumberForStudentExists(String registrationNumber) throws NamingException, SQLException {
 
         boolean exists = false;
@@ -664,11 +657,10 @@ public class KelasiDB {
         return exists;
 
     }
-    
-     public static int insertStudent(Connection connection, Students student)
-            throws SQLException, NamingException{
 
-         
+    public static int insertStudent(Connection connection, Students student)
+            throws SQLException, NamingException {
+
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -681,7 +673,7 @@ public class KelasiDB {
 
         ps.setInt(1, student.getSchoolID());
         ps.setInt(2, student.getUserID());
-        
+
         ps.setString(3, student.getRegistrationNumber());
         ps.setString(4, student.getFirstName());
         ps.setString(5, student.getLastName());
@@ -694,7 +686,6 @@ public class KelasiDB {
         ps.setString(12, student.getPhoneNumber());
         ps.setString(13, student.getAddress());
         ps.setString(14, student.getIsActive());
-       
 
         int rows = ps.executeUpdate();
 
@@ -713,8 +704,8 @@ public class KelasiDB {
 
         return studentID;
     }
-     
-     public static boolean registerStudent(User user, Students student)
+
+    public static boolean registerStudent(User user, Students student)
             throws SQLException, NamingException {
 
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -726,7 +717,7 @@ public class KelasiDB {
             // 1. insert user
             int userID = insertUser(connection, user);
 
-            // 2. lier teacher au user
+            // 2. lier student
             student.setUserID(userID);
 
             // 3. insert teacher
@@ -743,6 +734,52 @@ public class KelasiDB {
             connection.setAutoCommit(true);
             connection.close();
         }
+    }
+
+    //select all students 
+    public static LinkedHashMap<String, Students> selectAllStudentsByID(int schoolID) throws NamingException, SQLException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT schoolID, userID, registrationNumber, firstName, lastName,"
+                + " gender, dateOfBirth, gradeLevel, department, enrollmentDate, academicYear,"
+                + " phone, address, isActive, createdAt, updatedAt FROM students WHERE schoolID = ? ORDER BY firstName";
+
+        ps = connection.prepareStatement(query);
+        ps.setInt(1, schoolID);
+
+        rs = ps.executeQuery();
+
+        LinkedHashMap<String, Students> student = new LinkedHashMap<>();
+        while (rs.next()) {
+            Students s = new Students();
+            s.setUserID(rs.getInt("userID"));
+            s.setFirstName(rs.getString("firstName"));
+            s.setLastName(rs.getString("lastName"));
+            s.setSchoolID(rs.getInt("schoolID"));
+            s.setRegistrationNumber(rs.getString("registrationNumber"));
+            s.setGender(rs.getString("gender"));
+            s.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+            s.setGradeLevel(rs.getString("gradeLevel"));
+            s.setDepartment(rs.getString("department"));
+            s.setEnrollmentDate(rs.getDate("enrollmentDate").toLocalDate());
+            s.setAcademicYear(rs.getString("academicYear"));
+            s.setPhoneNumber(rs.getString("phone"));
+            s.setAddress(rs.getString("address"));
+            s.setIsActive(rs.getString("isActive"));
+            s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
+            s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
+
+            student.put(s.getRegistrationNumber(), s);
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return student;
     }
 
 }

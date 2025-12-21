@@ -1,6 +1,6 @@
 <%-- 
-    Document   : allTeachers
-    Created on : Dec 20, 2025, 1:56:48 PM
+    Document   : students
+    Created on : Dec 21, 2025, 12:20:21 PM
     Author     : kembe
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
     </head>
     <body>
+        
+        <style> </style>
 
         <div class="layout">
 
@@ -37,7 +39,7 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Teachers</h1>
+                        <h1>Students</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                     </div>
 
@@ -45,24 +47,29 @@
                 </div>
                 <div class="section">
                     <div class="section-header">
-                        <h2>Teachers List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
+                        <h2>Students List</h2>
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddStudent">+ Add Student</a>
                     </div>
 
 
-
-                    <table class="table">
+                    <div class="table-wraper">
+                    <table class="table" id="tab">
                         <thead>
                             <tr>
+                                <th>Student ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Subject</th>
-                                <th>Qualification</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Grade Level</th>
+                                <th>Department</th>
+                                <th>Enrollment Date</th>
+                                <th>Academic Year</th>
                                 <th>Phone Number</th>
-                                <th>Office Location</th>
+                                <th>Address</th>
                                 <th>Status</th>
-                                <th>Hire Date</th>
-                                <th>Created Date</th>
+                                <th>Created AT</th>
+                                <th>Updated AT</th>
                                 
 
                             </tr>
@@ -71,27 +78,33 @@
                         <tbody>
                             <c:choose> 
 
-                                <c:when test="${empty teachers}">
+                                <c:when test="${empty student}">
 
 
                                     <tr>
-                                        <td colspan="9" class="empty">No teacher found.</td>
+                                        <td colspan="13" class="empty">No student found.</td>
                                     </tr>
 
                                 </c:when>
                                 <c:otherwise>
-                                    <c:forEach var="t" items="${teachers.values()}">
+                                    <c:forEach var="s" items="${student.values()}">
                                         <tr>
-                                            <td>${t.firstName}</td>
-                                            <td>${t.lastName}</td>
-                                            <td>${t.subject}</td>
-                                            <td>${t.qualification}</td>
-                                            <td>${t.phoneNumber}</td>
-                                            <td>${t.officeLocation}</td>
-                                            <td>${t.isActive}</td>
-                                            <td>${t.hireDate}</td>
+                                            <td>${s.registrationNumber}</td>
+                                            <td>${s.firstName}</td>
+                                            <td>${s.lastName}</td>
+                                            <td>${s.gender}</td>
+                                            <td>${s.dateOfBirth}</td>
+                                            <td>${s.gradeLevel}</td>
+                                            <td>${s.department}</td>
+                                            <td>${s.enrollmentDate}</td>
+                                            <td>${s.academicYear}</td>
+                                            <td>${s.phoneNumber}</td>
+                                            <td>${s.address}</td>
+                                            <td>${s.isActive}</td>
+                                            <td>${s.getCreatedFormattedTime()}</td>
+                                            <td>${s.getUpdatedFormattedTime()}</td>
                                                 
-                                            <td>${t.getFormattedTime()}</td>
+                                            
 
                                         </tr>
                                     </c:forEach>
@@ -99,7 +112,7 @@
                             </c:choose>
                         </tbody>
                     </table>
-
+                    </div>
                 </div>
 
 
@@ -107,4 +120,3 @@
 
     </body>
 </html>
-

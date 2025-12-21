@@ -659,6 +659,20 @@ public class Private extends HttpServlet {
                     
 
                     break;
+                    
+                case "listStudents":
+                    
+                    schoolID = loggedInUser.getSchoolID();
+
+                    school = KelasiDB.getSchoolByID(schoolID);
+
+                    LinkedHashMap<String, Students> student = KelasiDB.selectAllStudentsByID(schoolID);
+
+                    request.setAttribute("student", student);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/students.jsp";
+                    break;
                 case "gotoEditProfile":
 
                     url = "/edit.jsp";
