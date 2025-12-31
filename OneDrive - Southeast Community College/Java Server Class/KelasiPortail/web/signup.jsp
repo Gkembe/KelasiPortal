@@ -357,6 +357,7 @@
                         <div class="input-group">
                             <label for="confirm">Confirm Password</label>
                             <input type="password" id="confirm" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
+                            
                         </div>
                     </div>
 

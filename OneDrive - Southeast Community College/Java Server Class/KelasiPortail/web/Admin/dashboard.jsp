@@ -119,7 +119,7 @@
         <div class="section">
             <h2>Quick Actions</h2>
             <div class="actions">
-                <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add User</a>
+                <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
                 <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
                 <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddStudent">+ Add Student</a>
             </div>

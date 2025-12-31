@@ -47,7 +47,7 @@
                 <div class="section">
                     <div class="section-header">
                         <h2>Users List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add User</a>
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
                     </div>
 
 
@@ -60,6 +60,7 @@
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Created</th>
+                                <th>Status</th>
 
                             </tr>
                         </thead>
@@ -83,6 +84,7 @@
                                             <td>${u.email}</td>
                                             <td>${u.phoneNumber}</td>
                                             <td>${u.getFormattedTime()}</td>
+                                            <td>${u.isActive}</td>
 
                                         </tr>
                                     </c:forEach>

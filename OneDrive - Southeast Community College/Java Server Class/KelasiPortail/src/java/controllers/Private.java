@@ -135,6 +135,7 @@ public class Private extends HttpServlet {
                     String role = "TEACHER";
                     String password = request.getParameter("password");
                     String confirmPassword = request.getParameter("confirmpassword");
+                    String isActives = "ACTIVE";
 
                     //VALIDATION SCHOOL
                     if (firstName == null || firstName.isEmpty() || firstName.trim().length() <= 0 || firstName.trim().length() > 50) {
@@ -306,7 +307,7 @@ public class Private extends HttpServlet {
                         break;
                     }
 
-                    User user = new User(username, hash, role, adminEmail, adminPhone, schoolID);
+                    User user = new User(username, hash, role, adminEmail, adminPhone, schoolID, isActives );
 
                     //DB (transaction)
                     try {
@@ -374,6 +375,7 @@ public class Private extends HttpServlet {
                     String Srole = "STUDENT";
                     String Spassword = request.getParameter("password");
                     String SconfirmPassword = request.getParameter("confirmpassword");
+                    String isAct = "ACTIVE";
 
                     //VALIDATION FOR STUDENT INFORMATION
                     if (registrationNumber == null || registrationNumber.isEmpty()) {
@@ -631,7 +633,7 @@ public class Private extends HttpServlet {
                         break;
                     }
 
-                    User u = new User(Susername, hashed, Srole, SadminEmail, SadminPhone, schoolID);
+                    User u = new User(Susername, hashed, Srole, SadminEmail, SadminPhone, schoolID, isAct);
 
                     //DB (transaction)
                     try {
@@ -672,6 +674,175 @@ public class Private extends HttpServlet {
                     request.setAttribute("school", school);
 
                     url = "/Admin/students.jsp";
+                    break;
+                    
+                case "inactiveStudent":
+                    String registrationNumb = request.getParameter("registrationNumber");
+                    
+                    schoolID = loggedInUser.getSchoolID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+                    
+                    KelasiDB.deactiveStudent(registrationNumb, schoolID);
+                    
+                    response.sendRedirect("Private?action=listStudents");
+                    return;
+                    //break;
+                    
+                case "activeStudent":
+                    
+                    String registrationNum = request.getParameter("registrationNumber");
+                    
+                    schoolID = loggedInUser.getSchoolID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+                    
+                    KelasiDB.activeStudent(registrationNum, schoolID);
+                    
+                    response.sendRedirect("Private?action=listStudents");
+                    
+                    return;
+                    
+                case "gotoAddUser":
+                    
+                    schoolID = loggedInUser.getSchoolID();
+                    school = KelasiDB.getSchoolByID(schoolID);
+                    request.setAttribute("school", school);
+                    url = "/Admin/addUsers.jsp";
+                    
+                    break;
+                    
+                case "addUsers":
+                    
+                    //GET PARAMETERS FOR ADMIN STUDENT 
+                    String aUsername = request.getParameter("username");
+                    String aAdminEmail = request.getParameter("adminemail");
+                    String aAdminPhone = request.getParameter("adminphone");
+                    String aRole = "ADMIN";
+                    String aPassword = request.getParameter("password");
+                    String aConfirmPassword = request.getParameter("confirmpassword");
+                    String isActiv = "ACTIVE";
+                    
+                    
+                    //VALIDATION FOR ADMIN STUDENT
+                    
+                    boolean isGood = true;
+                    if (aUsername == null || aUsername.trim().isEmpty()) {
+                        badMessage.add("Username is required.");
+                        isOk = false;
+                    } else {
+                        aUsername = aUsername.trim();
+                        if (KelasiDB.usernameExists(aUsername)) {
+                            badMessage.add("Username already exists.");
+                            isGood = false;
+                        }
+                    }
+
+                    if (aAdminEmail == null || aAdminEmail.trim().isEmpty()) {
+                        badMessage.add("Admin email is required.");
+                        isGood = false;
+                    } else {
+                        SadminEmail = aAdminEmail.trim();
+                        if (KelasiDB.adminEmailExists(SadminEmail)) {
+                            badMessage.add("Admin email already exists.");
+                            isGood = false;
+                        }
+                    }
+
+                    if (aAdminPhone.length() > 15) {
+
+                        badMessage.add("Phone Number cannot be more then 15 characters.");
+                        isGood = false;
+
+                    } else {
+
+                        aAdminPhone = aAdminPhone.trim();
+                    }
+
+                    // Password validation 
+                    if (aPassword == null || aPassword.isBlank()) {
+                        badMessage.add("Password cannot be empty.");
+                        isGood = false;
+                    } else {
+                        if (aPassword.length() < 10) {
+                            badMessage.add("Password must be at least 10 characters.");
+                            isGood = false;
+                        }
+                        if (!aPassword.matches(".*[A-Z].*")) {
+                            badMessage.add("Password must contain at least one uppercase letter.");
+                            isGood = false;
+                        }
+                        if (!aPassword.matches(".*[a-z].*")) {
+                            badMessage.add("Password must contain at least one lowercase letter.");
+                            isGood = false;
+                        }
+                        if (!aPassword.matches(".*[0-9].*")) {
+                            badMessage.add("Password must contain at least one number.");
+                            isGood = false;
+                        }
+                        if (!aPassword.matches(".*[^a-zA-Z0-9].*")) {
+                            badMessage.add("Password must contain at least one special character.");
+                            isGood = false;
+                        }
+                    }
+
+                    if (aConfirmPassword == null || !aPassword.equals(aConfirmPassword)) {
+                        badMessage.add("Password must match confirmation password.");
+                        isOk = false;
+                    }
+                    // STOP HERE if invalid 
+                    if (!isGood) {
+                        request.setAttribute("badMessage", badMessage);
+                        url = "/Admin/addUsers.jsp";
+                        break;
+                    }
+                    
+                    // Hash password
+                    String hashedPass = null;
+                    
+                    schoolID = loggedInUser.getSchoolID();
+
+                    try {
+                        SecretKeyCredentialHandler ch = new SecretKeyCredentialHandler();
+                        ch.setAlgorithm("PBKDF2WithHmacSHA256");
+                        ch.setKeyLength(256);
+                        ch.setSaltLength(16);
+                        ch.setIterations(4096);
+
+                        hashedPass = ch.mutate(aPassword);
+
+                    } catch (Exception e) {
+                        
+                        badMessage.add("Password encryption failed.");
+                        request.setAttribute("badMessage", badMessage);
+                        url = "/Admin/addUsers.jsp";
+                        break;
+                    }
+
+                    User us = new User(aUsername, hashedPass, aRole, aAdminEmail, aAdminPhone, schoolID, isActiv);
+
+                    try {
+                        KelasiDB.insertAdmin(us);
+
+                        if (isGood) {
+                            
+                            request.setAttribute("message", "Registration successful.");
+                            url = "/Admin/addUsers.jsp";
+                        } else {
+                            badMessage.add("Registration failed.");
+                            request.setAttribute("badMessage", badMessage);
+                            url = "/Admin/addUsers.jsp";
+                        }
+
+                    } catch (SQLException | NamingException ex) {
+                        ex.printStackTrace();
+                        
+                        
+                        request.setAttribute("message", "ERROR, " + ex.getClass());
+                        
+                        url = "/errorPage.jsp";
+
+                    }
+                    
+                    
                     break;
                 case "gotoEditProfile":
 

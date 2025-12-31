@@ -121,6 +121,15 @@ public class Public extends HttpServlet {
 
                     }
                     String storedHash = loggedInUser.getPassword();
+                    String status = loggedInUser.getIsActive();
+                    
+                    if(!status.equals("ACTIVE")){
+                    
+                        request.getSession().removeAttribute("loggedInUser");
+                        request.setAttribute("message", "Account is inactive");
+                        url = "/login.jsp";
+                        break;
+                    }
 
                     boolean isMatch = false;
 
@@ -137,6 +146,14 @@ public class Public extends HttpServlet {
                     } catch (Exception ex) {
                         LOG.log(Level.SEVERE, null, ex);
                         request.setAttribute("message", "Error with hashing algorithm.");
+                        url = "/login.jsp";
+                        break;
+                    }
+                    
+                    if(!status.equals("ACTIVE")){
+                    
+                        request.getSession().removeAttribute("loggedInUser");
+                        request.setAttribute("message", "Account is inactive");
                         url = "/login.jsp";
                         break;
                     }
@@ -180,6 +197,7 @@ public class Public extends HttpServlet {
                     String role = "ADMIN";
                     String password = request.getParameter("password");
                     String confirmPassword = request.getParameter("confirmpassword");
+                    String isAc = "ACTIVE";
 
                     //VALIDATION SCHOOL
                     if (schoolName == null || schoolName.trim().isEmpty() || schoolName.trim().length() < 3 || schoolName.trim().length() > 100) {
@@ -353,7 +371,7 @@ public class Public extends HttpServlet {
                         break;
                     }
 
-                    User user = new User(username, hash, role, adminEmail, adminPhone, 0);
+                    User user = new User(username, hash, role, adminEmail, adminPhone, 0, isAc);
 
                     //DB (transaction)
                     try {

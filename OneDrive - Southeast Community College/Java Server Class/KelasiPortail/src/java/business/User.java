@@ -23,11 +23,12 @@ public class User implements Serializable {
     private String phoneNumber;
     private LocalDateTime createdAt;
     private int schoolID;
+    private String isActive;
 
     public User() {
     }
 
-    public User(String userName, String password, String role, String email, String phoneNumber, LocalDateTime createdAt, int schoolID) {
+    public User(String userName, String password, String role, String email, String phoneNumber, LocalDateTime createdAt, int schoolID, String isActive) {
         this.userName = userName;
         this.password = password;
         this.role = role;
@@ -35,15 +36,17 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.createdAt = createdAt;
         this.schoolID = schoolID;
+        this.isActive = isActive;
     }
 
-    public User(String userName, String password, String role, String email, String phoneNumber, int schoolID) {
+    public User(String userName, String password, String role, String email, String phoneNumber, int schoolID, String isActive) {
         this.userName = userName;
         this.password = password;
         this.role = role;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.schoolID = schoolID;
+        this.isActive = isActive;
     }
 
     public String getUserName() {
@@ -114,5 +117,15 @@ public class User implements Serializable {
     public void setSchoolID(int schoolID) {
         this.schoolID = schoolID;
     }
+
+    public String getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
+    
+    
 
 }
