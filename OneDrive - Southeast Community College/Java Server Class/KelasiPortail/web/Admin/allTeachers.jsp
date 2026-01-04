@@ -11,8 +11,39 @@
         <meta charset="UTF-8">
         <title>Kelasi - Users</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/teacherButton.css">
     </head>
     <body>
+        <style>.status-btn{
+                display:inline-block;
+                padding:6px 14px;
+                font-size:13px;
+                font-weight:600;
+                border-radius:8px;
+                text-decoration:none;
+                border:1px solid transparent;
+                cursor:pointer;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .status-btn.disabled{
+                background:#f87171;
+                color:#fff;
+                border-color:#ef4444;
+            }
+            .status-btn.disabled:hover{
+                background:#ef4444;
+            }
+
+            .status-btn.activate{
+                background:#60a5fa;
+                color:#fff;
+                border-color:#3b82f6;
+            }
+            .status-btn.activate:hover{
+                background:#3b82f6;
+            }</style>
+
 
         <div class="layout">
 
@@ -50,56 +81,75 @@
                     </div>
 
 
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Subject</th>
-                                <th>Qualification</th>
-                                <th>Phone Number</th>
-                                <th>Office Location</th>
-                                <th>Status</th>
-                                <th>Hire Date</th>
-                                <th>Created Date</th>
-                                
-
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <c:choose> 
-
-                                <c:when test="${empty teachers}">
+                    <div class="table-wraper">
+                        <table class="table" id="tab">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Subject</th>
+                                    <th>Qualification</th>
+                                    <th>Phone Number</th>
+                                    <th>Office Location</th>
+                                    <th>Status</th>
+                                    <th>Hire Date</th>
+                                    <th>Created Date</th>
+                                    <th>Inactive</th>
+                                    <th>Active</th>
 
 
-                                    <tr>
-                                        <td colspan="9" class="empty">No teacher found.</td>
-                                    </tr>
+                                </tr>
+                            </thead>
 
-                                </c:when>
-                                <c:otherwise>
-                                    <c:forEach var="t" items="${teachers.values()}">
+                            <tbody>
+                                <c:choose> 
+
+                                    <c:when test="${empty teachers}">
+
+
                                         <tr>
-                                            <td>${t.firstName}</td>
-                                            <td>${t.lastName}</td>
-                                            <td>${t.subject}</td>
-                                            <td>${t.qualification}</td>
-                                            <td>${t.phoneNumber}</td>
-                                            <td>${t.officeLocation}</td>
-                                            <td>${t.isActive}</td>
-                                            <td>${t.hireDate}</td>
-                                                
-                                            <td>${t.getFormattedTime()}</td>
-
+                                            <td colspan="9" class="empty">No teacher found.</td>
                                         </tr>
-                                    </c:forEach>
-                                </c:otherwise>
-                            </c:choose>
-                        </tbody>
-                    </table>
 
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="t" items="${teachers.values()}">
+                                            <tr>
+                                                <td>${t.firstName}</td>
+                                                <td>${t.lastName}</td>
+                                                <td>${t.subject}</td>
+                                                <td>${t.qualification}</td>
+                                                <td>${t.phoneNumber}</td>
+                                                <td>${t.officeLocation}</td>
+                                                <td>${t.isActive}</td>
+                                                <td>${t.hireDate}</td>
+
+                                                <td>${t.getFormattedTime()}</td>
+                                                <td>
+                                                    <a class="status-btn disabled"
+                                                       href="${pageContext.request.contextPath}/Private?action=inactiveTeacher&teacherID=${t.teacherID}"
+                                                       onclick="return confirm('Are you sure you want to deactivate this Teacher?')">
+                                                        DISABLE
+                                                    </a>
+                                                </td>
+
+                                                <td>
+                                                    <a class="status-btn activate"
+                                                       href="${pageContext.request.contextPath}/Private?action=activeTeacher&teacherID=${t.teacherID}"
+                                                       onclick="return confirm('Are you sure you want to activate this Teacher?')">
+                                                        ACTIVATE
+                                                    </a>
+                                                </td>
+
+
+
+                                            </tr>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
 
@@ -107,4 +157,10 @@
 
     </body>
 </html>
+
+
+
+
+
+
 

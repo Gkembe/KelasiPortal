@@ -114,7 +114,7 @@
                 <div class="info-item"><span>SchoolID:</span> ${school.schoolID}</div>
             </div>
         </div>
-
+            
         <!-- QUICK ACTIONS -->
         <div class="section">
             <h2>Quick Actions</h2>

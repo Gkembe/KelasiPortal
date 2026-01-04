@@ -95,6 +95,7 @@ public class Private extends HttpServlet {
                     break;
                 case "listUsers":
 
+                    
                     schoolID = loggedInUser.getSchoolID();
                     school = KelasiDB.getSchoolByID(schoolID);
 
@@ -307,7 +308,7 @@ public class Private extends HttpServlet {
                         break;
                     }
 
-                    User user = new User(username, hash, role, adminEmail, adminPhone, schoolID, isActives );
+                    User user = new User(username, hash, role, adminEmail, adminPhone, schoolID, isActives);
 
                     //DB (transaction)
                     try {
@@ -433,7 +434,7 @@ public class Private extends HttpServlet {
                         isOk = false;
                     } else {
 
-                       birthDate = LocalDate.parse(birthDates);
+                        birthDate = LocalDate.parse(birthDates);
                     }
                     if (gradeLevel == null || gradeLevel.isEmpty()) {
 
@@ -593,11 +594,10 @@ public class Private extends HttpServlet {
                         url = "/Admin/addStudents.jsp";
                         break;
                     }
-                    
+
                     //SET AND INSERT DATA, build object
-                    
                     schoolID = loggedInUser.getSchoolID();
-                    
+
                     Students s = new Students();
                     s.setSchoolID(schoolID);
                     s.setRegistrationNumber(registrationNumber);
@@ -612,7 +612,7 @@ public class Private extends HttpServlet {
                     s.setPhoneNumber(SphoneNumber);
                     s.setAddress(address);
                     s.setIsActive(SisActive);
-                    
+
                     // Hash password
                     String hashed = null;
 
@@ -626,7 +626,7 @@ public class Private extends HttpServlet {
                         hashed = ch.mutate(Spassword);
 
                     } catch (Exception e) {
-                        
+
                         badMessage.add("Password encryption failed.");
                         request.setAttribute("badMessage", badMessage);
                         url = "/Admin/addStudents.jsp";
@@ -640,7 +640,7 @@ public class Private extends HttpServlet {
                         boolean good = KelasiDB.registerStudent(u, s);
 
                         if (good) {
-                            
+
                             request.setAttribute("message", "Registration successful.");
                             url = "/Admin/addStudents.jsp";
                         } else {
@@ -651,19 +651,17 @@ public class Private extends HttpServlet {
 
                     } catch (SQLException | NamingException ex) {
                         ex.printStackTrace();
-                        
-                        
+
                         request.setAttribute("message", "ERROR, " + ex.getClass());
-                        
+
                         url = "/errorPage.jsp";
 
                     }
-                    
 
                     break;
-                    
+
                 case "listStudents":
-                    
+
                     schoolID = loggedInUser.getSchoolID();
 
                     school = KelasiDB.getSchoolByID(schoolID);
@@ -675,43 +673,43 @@ public class Private extends HttpServlet {
 
                     url = "/Admin/students.jsp";
                     break;
-                    
+
                 case "inactiveStudent":
                     String registrationNumb = request.getParameter("registrationNumber");
-                    
+
                     schoolID = loggedInUser.getSchoolID();
                     //school = KelasiDB.getSchoolByID(schoolID);
-                    
+
                     KelasiDB.deactiveStudent(registrationNumb, schoolID);
-                    
+
                     response.sendRedirect("Private?action=listStudents");
                     return;
-                    //break;
-                    
+                //break;
+
                 case "activeStudent":
-                    
+
                     String registrationNum = request.getParameter("registrationNumber");
-                    
+
                     schoolID = loggedInUser.getSchoolID();
                     //school = KelasiDB.getSchoolByID(schoolID);
-                    
+
                     KelasiDB.activeStudent(registrationNum, schoolID);
-                    
+
                     response.sendRedirect("Private?action=listStudents");
-                    
+
                     return;
-                    
+
                 case "gotoAddUser":
-                    
+
                     schoolID = loggedInUser.getSchoolID();
                     school = KelasiDB.getSchoolByID(schoolID);
                     request.setAttribute("school", school);
                     url = "/Admin/addUsers.jsp";
-                    
+
                     break;
-                    
+
                 case "addUsers":
-                    
+
                     //GET PARAMETERS FOR ADMIN STUDENT 
                     String aUsername = request.getParameter("username");
                     String aAdminEmail = request.getParameter("adminemail");
@@ -720,10 +718,8 @@ public class Private extends HttpServlet {
                     String aPassword = request.getParameter("password");
                     String aConfirmPassword = request.getParameter("confirmpassword");
                     String isActiv = "ACTIVE";
-                    
-                    
+
                     //VALIDATION FOR ADMIN STUDENT
-                    
                     boolean isGood = true;
                     if (aUsername == null || aUsername.trim().isEmpty()) {
                         badMessage.add("Username is required.");
@@ -794,10 +790,10 @@ public class Private extends HttpServlet {
                         url = "/Admin/addUsers.jsp";
                         break;
                     }
-                    
+
                     // Hash password
                     String hashedPass = null;
-                    
+
                     schoolID = loggedInUser.getSchoolID();
 
                     try {
@@ -810,7 +806,7 @@ public class Private extends HttpServlet {
                         hashedPass = ch.mutate(aPassword);
 
                     } catch (Exception e) {
-                        
+
                         badMessage.add("Password encryption failed.");
                         request.setAttribute("badMessage", badMessage);
                         url = "/Admin/addUsers.jsp";
@@ -823,7 +819,7 @@ public class Private extends HttpServlet {
                         KelasiDB.insertAdmin(us);
 
                         if (isGood) {
-                            
+
                             request.setAttribute("message", "Registration successful.");
                             url = "/Admin/addUsers.jsp";
                         } else {
@@ -834,19 +830,94 @@ public class Private extends HttpServlet {
 
                     } catch (SQLException | NamingException ex) {
                         ex.printStackTrace();
-                        
-                        
-                        request.setAttribute("message", "ERROR, " + ex.getClass());
-                        
-                        url = "/errorPage.jsp";
 
+                        request.setAttribute("message", "ERROR, " + ex.getClass());
+
+                        url = "/errorPage.jsp";
+                    }
+
+                    break;
+
+                case "inactiveTeacher":
+                    String teacherID = request.getParameter("teacherID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+
+                    int teacherid = Integer.parseInt(teacherID);
+
+                    KelasiDB.deactiveTeacher(teacherid, schoolID);
+
+                    response.sendRedirect("Private?action=listTeachers");
+
+                    return;
+                //break;
+
+                case "activeTeacher":
+
+                    String teacherId = request.getParameter("teacherID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+
+                    int teacherIDS = Integer.parseInt(teacherId);
+                    KelasiDB.activeTeacher(teacherIDS, schoolID);
+
+                    response.sendRedirect("Private?action=listTeachers");
+
+                    return;
+
+                case "inactiveUser":
+                    String useID = request.getParameter("userID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    int userIDS = loggedInUser.getUserID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+
+                    int userId = Integer.parseInt(useID);
+
+                    HttpSession se = request.getSession();
+                    if (userId == userIDS) {
+
+                        
+                        request.getSession().setAttribute("me",
+                                "You cannot deactivate your own administrator account.");
+                        response.sendRedirect("Private?action=listUsers");
+                        return;
+                    }
+                    else{
+                        
+                        se.removeAttribute("me");
+                     
                     }
                     
                     
-                    break;
+
+                    KelasiDB.deactiveUser(userId, schoolID, userIDS);
+
+                    response.sendRedirect("Private?action=listUsers");
+
+                    
+                    return;
+                //break;
+
+                case "activeUser":
+
+                    String userid = request.getParameter("userID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    //school = KelasiDB.getSchoolByID(schoolID);
+
+                    int userID = Integer.parseInt(userid);
+                    KelasiDB.activeUser(userID, schoolID);
+
+                    response.sendRedirect("Private?action=listUsers");
+
+                    return;
                 case "gotoEditProfile":
 
                     url = "/edit.jsp";
+
                     break;
                 default:
                     url = "/index.jsp";

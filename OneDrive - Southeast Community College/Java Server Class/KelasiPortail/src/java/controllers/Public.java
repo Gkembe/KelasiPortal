@@ -122,9 +122,9 @@ public class Public extends HttpServlet {
                     }
                     String storedHash = loggedInUser.getPassword();
                     String status = loggedInUser.getIsActive();
-                    
-                    if(!status.equals("ACTIVE")){
-                    
+
+                    if (!status.equals("ACTIVE")) {
+
                         request.getSession().removeAttribute("loggedInUser");
                         request.setAttribute("message", "Account is inactive");
                         url = "/login.jsp";
@@ -149,9 +149,9 @@ public class Public extends HttpServlet {
                         url = "/login.jsp";
                         break;
                     }
-                    
-                    if(!status.equals("ACTIVE")){
-                    
+
+                    if (!status.equals("ACTIVE")) {
+
                         request.getSession().removeAttribute("loggedInUser");
                         request.setAttribute("message", "Account is inactive");
                         url = "/login.jsp";
@@ -189,6 +189,7 @@ public class Public extends HttpServlet {
                     String website = request.getParameter("website");
                     String schoolEmail = request.getParameter("schoolemail");
                     Part logoPart = request.getPart("schoollogo");
+                    
 
                     // READ USER ADMIN
                     String username = request.getParameter("username");
@@ -381,7 +382,7 @@ public class Public extends HttpServlet {
                             request.setAttribute("message", "Registration successful. Please log in.");
                             url = "/index.jsp";
                         } else {
-                            
+
                             errors.add("Registration failed.");
                             request.setAttribute("errors", errors);
                             url = "/signup.jsp";

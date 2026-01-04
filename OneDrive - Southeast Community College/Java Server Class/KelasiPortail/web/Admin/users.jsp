@@ -14,7 +14,37 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
     </head>
     <body>
+        <style>.status-btn{
+                display:inline-block;
+                padding:6px 14px;
+                font-size:13px;
+                font-weight:600;
+                border-radius:8px;
+                text-decoration:none;
+                border:1px solid transparent;
+                cursor:pointer;
+                transition: all 0.2s ease-in-out;
+            }
 
+            .status-btn.disabled{
+                background:#f87171;
+                color:#fff;
+                border-color:#ef4444;
+            }
+            .status-btn.disabled:hover{
+                background:#ef4444;
+            }
+
+            .status-btn.activate{
+                background:#60a5fa;
+                color:#fff;
+                border-color:#3b82f6;
+            }
+            .status-btn.activate:hover{
+                background:#3b82f6;
+            }
+            .mes {color: red;}
+        </style>
         <div class="layout">
 
             <!-- SIDEBAR -->
@@ -51,7 +81,7 @@
                     </div>
 
 
-
+                    <p class="mes">${me}</p>
                     <table class="table">
                         <thead>
                             <tr>
@@ -61,6 +91,8 @@
                                 <th>Phone</th>
                                 <th>Created</th>
                                 <th>Status</th>
+                                <th>Inactive</th>
+                                <th>Active</th>
 
                             </tr>
                         </thead>
@@ -85,6 +117,14 @@
                                             <td>${u.phoneNumber}</td>
                                             <td>${u.getFormattedTime()}</td>
                                             <td>${u.isActive}</td>
+                                            <td><a class="status-btn disabled" 
+                                                   href="${pageContext.request.contextPath}/Private?action=inactiveUser&userID=${u.userID}"
+                                                   onclick="return confirm('Are you sure you want to deactive this Administrator?')"
+                                                   >DISABLE</a></td>
+                                            <td><a class="status-btn activate"
+                                                   href="${pageContext.request.contextPath}/Private?action=activeUser&userID=${u.userID}"
+                                                   onclick="return confirm('Are you sure you want to active this Administrator?')"
+                                                   >ACTIVATE</a></td>
 
                                         </tr>
                                     </c:forEach>

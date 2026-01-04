@@ -14,7 +14,35 @@
     </head>
     <body>
 
-        <style> </style>
+        <style>.status-btn{
+                display:inline-block;
+                padding:6px 14px;
+                font-size:13px;
+                font-weight:600;
+                border-radius:8px;
+                text-decoration:none;
+                border:1px solid transparent;
+                cursor:pointer;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .status-btn.disabled{
+                background:#f87171;
+                color:#fff;
+                border-color:#ef4444;
+            }
+            .status-btn.disabled:hover{
+                background:#ef4444;
+            }
+
+            .status-btn.activate{
+                background:#60a5fa;
+                color:#fff;
+                border-color:#3b82f6;
+            }
+            .status-btn.activate:hover{
+                background:#3b82f6;
+            }</style>
 
         <div class="layout">
 
@@ -105,11 +133,11 @@
                                                 <td>${s.isActive}</td>
                                                 <td>${s.getCreatedFormattedTime()}</td>
                                                 <td>${s.getUpdatedFormattedTime()}</td>
-                                                <td><a style="border: 1px solid #d1d5db; text-decoration: none; background-color: rgb(232, 97, 97);" 
+                                                <td><a class="status-btn disabled" 
                                                        href="${pageContext.request.contextPath}/Private?action=inactiveStudent&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to deactive this student?')"
                                                        >DISABLE</a></td>
-                                                <td><a class="desactBu" style="border: 1px solid #d1d5db; text-decoration: none; background-color: #72a8e6ff;"
+                                                <td><a class="status-btn activate"
                                                        href="${pageContext.request.contextPath}/Private?action=activeStudent&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to active this student?')"
                                                        >ACTIVATE</a></td>

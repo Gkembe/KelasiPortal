@@ -50,19 +50,15 @@
                         <h2>Student Information</h2>
                     </div>
                     <ul style="color: red">
-                        
+
                         <c:forEach var="b" items="${badMessage}">
-                            
-                            
+
+
                             <li>${b}</li>
                         </c:forEach>
-                        
-                        
+
                     </ul>
-                    
-                    
-                    
-                    <p>${message}</p>
+                    <p style="color: green">${message}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
                         <input type="hidden" name="action" value="addUsers">
@@ -70,13 +66,11 @@
                         <input type="hidden" name="userID" value="${user.userID}">
 
                         <div class="form-grid">
-                            
+
                             <div class="form-row">
                                 <label for="username">Username ADMIN</label>
                                 <input type="text" class="form-input" name="username" placeholder="Andree"  />
                             </div>
-
-
                             <div class="form-row">
                                 <label for="adminemail">Email ADMIN</label>
                                 <input type="email" class="form-input" name="adminemail" placeholder="admin@school.com" />
@@ -86,19 +80,15 @@
                                 <label for="adminphone" class="form-label">Phone ADMIN</label>
                                 <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
                             </div>
-
-                            
-                                <div class="form-row">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                                </div>
-                                <div class="form-row">
-                                    <label for="confirm" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                                </div>
-                            
+                            <div class="form-row">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
+                            </div>
+                            <div class="form-row">
+                                <label for="confirm" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
+                            </div>
                         </div>
-
                         <div class="actions">
                             <input class="btn btn-primary" type="submit" value="Add ADMIN">
                             <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Cancel</a>

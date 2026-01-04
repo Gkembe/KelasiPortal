@@ -9,16 +9,13 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Kelasi Portal — Sign Up</title>
-        <link rel="stylesheet" href="signup.css" />
+        <title>Kelasi Portal - Sign Up</title>
+        <link rel="stylesheet" href="signup.css"/>
     </head>
     <body>
-
-        <style>
-
-            
+        <style>            
         </style>
         <header class="topbar">
             <a class="brand" href="index.jsp">Kelasi Portal</a>
@@ -35,11 +32,9 @@
 
                     <c:forEach var="mes" items="${errors}">
 
-
                         <li>${mes}</li>
                         
                     </c:forEach>
-
 
                 </ul>
 
@@ -52,14 +47,13 @@
                     </div>
                     <div class="input-group">
                         <label for="shortname">School Short Name</label>
-                        <input type="text" id="shortname" name="shortname" placeholder="e.g., KLS" />
+                        <input type="text" id="shortname" name="shortname" placeholder="e.g., KLS"/>
                     </div>
 
                     <div class="input-group">
                         <label for="registrationnumber">Registration Number</label>
-                        <input type="text" id="registrationnumber" name="registrationNumber" placeholder="e.g., EUD-NE-2023-0045"  />
+                        <input type="text" id="registrationnumber" name="registrationNumber" placeholder="e.g., EUD-NE-2023-0045"/>
                     </div>
-
                     <div class="input-group">
                         <label for="schoolType">School Type</label>
                         <select id="schoolType" name="schooltype" >
@@ -82,7 +76,6 @@
                         </select>
 
                     </div>
-
                     <div class="input-group">
                         <label for="coutry">Country</label>
                         <select id="coutry" name="country"  >
@@ -153,11 +146,11 @@
                             <option value="Fiji">Fiji</option>
                             <option value="Finland">Finland</option>
                             <option value="France">France</option>
-
                             <option value="Gabon">Gabon</option>
                             <option value="Gambia">Gambia</option>
                             <option value="Georgia">Georgia</option>
                             <option value="Germany">Germany</option>
+                            
                             <option value="Ghana">Ghana</option>
                             <option value="Greece">Greece</option>
                             <option value="Grenada">Grenada</option>
@@ -258,6 +251,7 @@
                             <option value="Serbia">Serbia</option>
                             <option value="Seychelles">Seychelles</option>
                             <option value="Sierra Leone">Sierra Leone</option>
+                            
                             <option value="Singapore">Singapore</option>
                             <option value="Slovakia">Slovakia</option>
                             <option value="Slovenia">Slovenia</option>
@@ -265,6 +259,7 @@
                             <option value="Somalia">Somalia</option>
                             <option value="South Africa">South Africa</option>
                             <option value="South Sudan">South Sudan</option>
+                            
                             <option value="Spain">Spain</option>
                             <option value="Sri Lanka">Sri Lanka</option>
                             <option value="Sudan">Sudan</option>

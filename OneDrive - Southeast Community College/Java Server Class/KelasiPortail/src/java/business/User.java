@@ -16,6 +16,7 @@ import org.apache.catalina.realm.SecretKeyCredentialHandler;
  */
 public class User implements Serializable {
 
+    
     private String userName;
     private String password;
     private String role;
@@ -24,11 +25,13 @@ public class User implements Serializable {
     private LocalDateTime createdAt;
     private int schoolID;
     private String isActive;
+    private int userID;
 
     public User() {
     }
 
-    public User(String userName, String password, String role, String email, String phoneNumber, LocalDateTime createdAt, int schoolID, String isActive) {
+    public User(String userName, String password, String role, String email, String phoneNumber, LocalDateTime createdAt, int schoolID, String isActive, int userD) {
+        
         this.userName = userName;
         this.password = password;
         this.role = role;
@@ -37,7 +40,10 @@ public class User implements Serializable {
         this.createdAt = createdAt;
         this.schoolID = schoolID;
         this.isActive = isActive;
+        this.userID = userID;
     }
+
+    
 
     public User(String userName, String password, String role, String email, String phoneNumber, int schoolID, String isActive) {
         this.userName = userName;
@@ -48,6 +54,21 @@ public class User implements Serializable {
         this.schoolID = schoolID;
         this.isActive = isActive;
     }
+
+    public User(String userName, String password, String role, String email, String phoneNumber, int schoolID, String isActive, int userID) {
+        this.userName = userName;
+        this.password = password;
+        this.role = role;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.schoolID = schoolID;
+        this.isActive = isActive;
+        this.userID = userID;
+    }
+    
+    
+    
+   
 
     public String getUserName() {
         return userName;
@@ -124,6 +145,14 @@ public class User implements Serializable {
 
     public void setIsActive(String isActive) {
         this.isActive = isActive;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
     
     

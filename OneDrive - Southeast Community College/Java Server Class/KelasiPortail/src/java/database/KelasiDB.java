@@ -36,7 +36,7 @@ public class KelasiDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT username, password, role, email, phone, created_at schoolID, isActive FROM users";
+        String query = "SELECT username, password, role, email, phone, created_at, schoolID, isActive, id FROM users";
 
         ps = connection.prepareStatement(query);
 
@@ -53,8 +53,9 @@ public class KelasiDB {
             LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
             int schoolID = rs.getInt("schoolID");
             String isActive = rs.getString("isActive");
+            int userID = rs.getInt("id");
 
-            User users = new User(userName, password, role, email, phone, createdAt, schoolID, isActive);
+            User users = new User(userName, password, role, email, phone, createdAt, schoolID, isActive, userID);
             user.put(users.getUserName(), users);
         }
 
@@ -65,7 +66,6 @@ public class KelasiDB {
         return user;
 
     }
-
     public static LinkedHashMap<Integer, School> selectSchool() throws NamingException, SQLException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
@@ -165,7 +165,7 @@ public class KelasiDB {
 
         connection = pool.getConnection();
 
-        String query = "SELECT username, password, role, email, phone, created_at, schoolID, isActive FROM users WHERE email = ?";
+        String query = "SELECT id, username, password, role, email, phone, created_at, schoolID, isActive FROM users WHERE email = ?";
 
         ps = connection.prepareStatement(query);
         ps.setString(1, email);
@@ -182,8 +182,8 @@ public class KelasiDB {
             LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
             int schoolID = rs.getInt("schoolID");
             String isActive = rs.getString("isActive");
-
-            user = new User(userName, password, role, emails, phone, createdAt, schoolID, isActive);
+            int userID = rs.getInt("id");
+            user = new User(userName, password, role, emails, phone, schoolID, isActive, userID);
 
         }
 
@@ -194,6 +194,8 @@ public class KelasiDB {
         return user;
 
     }
+    
+    
 
     public static boolean usernameExists(String username) throws NamingException, SQLException {
 
@@ -562,7 +564,7 @@ public class KelasiDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT username, password, role, email, phone, created_at, schoolID, isActive FROM users WHERE schoolID = ? AND role = 'ADMIN' ORDER BY created_at";
+        String query = "SELECT id, username, password, role, email, phone, created_at, schoolID, isActive FROM users WHERE schoolID = ? AND role = 'ADMIN' ORDER BY created_at";
 
         ps = connection.prepareStatement(query);
         ps.setInt(1, schoolID);
@@ -581,6 +583,7 @@ public class KelasiDB {
             users.setSchoolID(rs.getInt("schoolID"));
             users.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             users.setIsActive(rs.getString("isActive"));
+            users.setUserID(rs.getInt("id"));
 
             user.put("" + users.getUserName(), users);
         }
@@ -600,7 +603,7 @@ public class KelasiDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT user_id, first_name, last_name, subject, qualification, phoneNumber, officeLocation, isActive, hireDate, createdAT, schoolID FROM teachers WHERE schoolID = ? ORDER BY first_name";
+        String query = "SELECT user_id, first_name, last_name, subject, qualification, phoneNumber, officeLocation, isActive, hireDate, createdAT, schoolID, teacherID FROM teachers WHERE schoolID = ? ORDER BY first_name";
 
         ps = connection.prepareStatement(query);
         ps.setInt(1, schoolID);
@@ -621,6 +624,7 @@ public class KelasiDB {
             t.setHireDate(rs.getDate("hireDate").toLocalDate());
             t.setCreatedAT(rs.getTimestamp("createdAT").toLocalDateTime());
             t.setSchoolID(rs.getInt("schoolID"));
+            t.setTeacherID(rs.getInt("teacherID"));
 
             teacher.put("" + "" + t.getFirstName(), t);
         }
@@ -878,7 +882,7 @@ public class KelasiDB {
         String query
                 = "INSERT INTO users (username, password, role, email, phone, schoolID, isActive) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+        
         ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
         ps.setString(1, user.getUserName());
@@ -897,11 +901,132 @@ public class KelasiDB {
         if (rs.next()) {
             userID = rs.getInt(1);
         }
-
         rs.close();
         ps.close();
 
         return userID;
     }
 
+    //UDPDATE TEACHER TO DEACTIVE HIM
+    public static void deactiveTeacher(int teacherID, int schoolID) throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String q1 = "UPDATE teachers SET isActive='INACTIVE' WHERE teacherID=? AND schoolID=?";
+        ps = connection.prepareStatement(q1);
+        ps.setInt(1, teacherID);
+        ps.setInt(2, schoolID);
+        ps.executeUpdate();
+        ps.close();
+
+        String q2 = "SELECT user_id FROM teachers WHERE teacherID=? AND schoolID=?";
+        ps = connection.prepareStatement(q2);
+        ps.setInt(1, teacherID);
+        ps.setInt(2, schoolID);
+
+        ResultSet rs = ps.executeQuery();
+
+        int userID = 0;
+        if (rs.next()) {
+            userID = rs.getInt("user_id");
+        }
+        rs.close();
+        ps.close();
+
+        if (userID != 0) {
+            String q3 = "UPDATE users SET isActive='INACTIVE' WHERE id=? AND schoolID=?";
+            ps = connection.prepareStatement(q3);
+            ps.setInt(1, userID);
+            ps.setInt(2, schoolID);
+            ps.executeUpdate();
+            ps.close();
+        }
+
+       
+        pool.freeConnection(connection);
+    }
+    
+    public static void activeTeacher(int teacherID, int schoolID) throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String q1 = "UPDATE teachers SET isActive='ACTIVE' WHERE teacherID=? AND schoolID=?";
+        ps = connection.prepareStatement(q1);
+        ps.setInt(1, teacherID);
+        ps.setInt(2, schoolID);
+        ps.executeUpdate();
+        ps.close();
+
+        String q2 = "SELECT user_id FROM teachers WHERE teacherID=? AND schoolID=?";
+        ps = connection.prepareStatement(q2);
+        ps.setInt(1, teacherID);
+        ps.setInt(2, schoolID);
+
+        ResultSet rs = ps.executeQuery();
+
+        
+        int userID = 0;
+        if (rs.next()) {
+            userID = rs.getInt("user_id");
+            
+        }
+        rs.close();
+        ps.close();
+
+        if (userID != 0) {
+            String q3 = "UPDATE users SET isActive='ACTIVE' WHERE id=? AND schoolID=?";
+            ps = connection.prepareStatement(q3);
+            ps.setInt(1, userID);
+            ps.setInt(2, schoolID);
+            ps.executeUpdate();
+            ps.close();
+        }
+
+    
+        pool.freeConnection(connection);
+    }
+    
+    
+    //UDPDATE USER TO DEACTIVE HIM
+    public static void deactiveUser(int userID, int schoolID, int loggedAdminID) throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String q1 = "UPDATE users SET isActive='INACTIVE' WHERE id =? AND schoolID =? AND role= 'ADMIN' AND id <> ?" ;
+        ps = connection.prepareStatement(q1);
+        ps.setInt(1, userID);
+        ps.setInt(2, schoolID);
+        ps.setInt(3, loggedAdminID);
+        ps.executeUpdate();
+        ps.close();
+
+        
+       
+        pool.freeConnection(connection);
+    }
+    
+    public static void activeUser(int userID, int schoolID) throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String q1 = "UPDATE users SET isActive='ACTIVE' WHERE id=? AND schoolID=? AND role= 'ADMIN'";
+        ps = connection.prepareStatement(q1);
+        ps.setInt(1, userID);
+        ps.setInt(2, schoolID);
+        ps.executeUpdate();
+        ps.close();
+
+        
+       
+        pool.freeConnection(connection);
+    }
+    
 }
