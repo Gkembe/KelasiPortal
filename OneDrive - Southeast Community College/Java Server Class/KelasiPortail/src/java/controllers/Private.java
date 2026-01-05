@@ -9,6 +9,7 @@ import business.Students;
 import business.Teachers;
 import business.User;
 import database.KelasiDB;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
@@ -16,13 +17,16 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import org.apache.catalina.realm.SecretKeyCredentialHandler;
 
 /**
@@ -30,6 +34,8 @@ import org.apache.catalina.realm.SecretKeyCredentialHandler;
  * @author kembe
  */
 @WebServlet(name = "Private", urlPatterns = {"/Private"})
+@MultipartConfig
+
 public class Private extends HttpServlet {
 
     /**
@@ -95,7 +101,6 @@ public class Private extends HttpServlet {
                     break;
                 case "listUsers":
 
-                    
                     schoolID = loggedInUser.getSchoolID();
                     school = KelasiDB.getSchoolByID(schoolID);
 
@@ -879,25 +884,20 @@ public class Private extends HttpServlet {
                     HttpSession se = request.getSession();
                     if (userId == userIDS) {
 
-                        
                         request.getSession().setAttribute("me",
                                 "You cannot deactivate your own administrator account.");
                         response.sendRedirect("Private?action=listUsers");
                         return;
-                    }
-                    else{
-                        
+                    } else {
+
                         se.removeAttribute("me");
-                     
+
                     }
-                    
-                    
 
                     KelasiDB.deactiveUser(userId, schoolID, userIDS);
 
                     response.sendRedirect("Private?action=listUsers");
 
-                    
                     return;
                 //break;
 
@@ -914,6 +914,94 @@ public class Private extends HttpServlet {
                     response.sendRedirect("Private?action=listUsers");
 
                     return;
+
+                case "gotoSchoolProfile":
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    School schools = KelasiDB.getSchoolByID(schoolID);
+
+                    request.setAttribute("loggedInUser", loggedInUser);
+                    request.setAttribute("school", schools);
+
+                    url = "/Admin/schoolProfile.jsp";
+                    break;
+
+                case "changeLogo":
+
+                    boolean isVali = true;
+                    List<String> error = new ArrayList<>();
+
+                   
+                    User loggedInUser2 = (User) session.getAttribute("loggedInUser");
+                    if (loggedInUser2 == null) {
+                        response.sendRedirect("Public?action=login");
+                        return;
+                    }
+
+                   
+                    int schoolId = loggedInUser2.getSchoolID();
+                    School sc = KelasiDB.getSchoolByID(schoolId);
+
+                    Part logoPart = request.getPart("schoollogo");
+                    String logoFileName = null;
+
+                    if (logoPart != null && logoPart.getSize() > 0) {
+
+                        if (logoPart.getSize() > 2 * 1024 * 1024) {
+                            error.add("Logo file is too large (max 2MB).");
+                            isVali = false;
+                        }
+
+                        String contentType = logoPart.getContentType();
+                        if (!contentType.equals("image/png") && !contentType.equals("image/jpeg")) {
+                            error.add("Logo must be PNG or JPG image.");
+                            isVali = false;
+                        }
+
+                        String originalName = Paths.get(logoPart.getSubmittedFileName())
+                                .getFileName().toString();
+
+                        String ext = originalName.substring(originalName.lastIndexOf('.') + 1);
+
+                        logoFileName = "school_" + sc.getSchoolID()
+                                + "_" + System.currentTimeMillis()
+                                + "." + ext;
+                    }
+
+                    if (isVali && logoPart != null && logoPart.getSize() > 0) {
+
+                        String uploadPath = getServletContext().getRealPath("/uploads/logos");
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdirs();
+                        }
+
+                        logoPart.write(uploadPath + File.separator + logoFileName);
+
+                        sc.setSchoolLogo(logoFileName);
+
+                        KelasiDB.updateSchoolLogo(sc.getSchoolID(), sc.getSchoolLogo());
+
+                        
+                        session.setAttribute("school", sc);
+
+                        
+                        session.setAttribute("loggedInUser", loggedInUser2);
+
+                        request.setAttribute("successMessage", "✅ Logo updated successfully.");
+                        response.sendRedirect(request.getContextPath() + "/Private?action=gotoSchoolProfile");
+                        return;
+                    }
+
+                    if (!isVali) {
+                        request.setAttribute("errors", error);
+                        request.getRequestDispatcher("/Admin/schoolProfile.jsp").forward(request, response);
+                        return;
+                    }
+
+                    break;
+
                 case "gotoEditProfile":
 
                     url = "/edit.jsp";

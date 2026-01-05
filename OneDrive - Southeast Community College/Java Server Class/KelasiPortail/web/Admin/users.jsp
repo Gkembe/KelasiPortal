@@ -12,6 +12,8 @@
         <meta charset="UTF-8">
         <title>Kelasi - Users</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     </head>
     <body>
         <style>.status-btn{
@@ -68,7 +70,7 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Users</h1>
+                        <h1><i class="fa-solid fa-circle-user"></i> Users</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                     </div>
 

@@ -374,8 +374,27 @@ h1{
 
 
 
+/* EMOJI */
+
+.error-page {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.error-page img {
+  width: 320px;
+  margin-bottom: 20px;
+}
+
+.error-page h1 {
+  font-size: 28px;
+}
 
 
 
 
+.alert-danger ul { 
+  margin: 0; 
+  padding-left: 18px; 
+}
 

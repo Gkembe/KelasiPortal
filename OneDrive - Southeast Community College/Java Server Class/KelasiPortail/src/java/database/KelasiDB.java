@@ -66,6 +66,7 @@ public class KelasiDB {
         return user;
 
     }
+
     public static LinkedHashMap<Integer, School> selectSchool() throws NamingException, SQLException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
@@ -194,8 +195,6 @@ public class KelasiDB {
         return user;
 
     }
-    
-    
 
     public static boolean usernameExists(String username) throws NamingException, SQLException {
 
@@ -882,7 +881,7 @@ public class KelasiDB {
         String query
                 = "INSERT INTO users (username, password, role, email, phone, schoolID, isActive) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
         ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
         ps.setString(1, user.getUserName());
@@ -944,10 +943,9 @@ public class KelasiDB {
             ps.close();
         }
 
-       
         pool.freeConnection(connection);
     }
-    
+
     public static void activeTeacher(int teacherID, int schoolID) throws NamingException, SQLException {
 
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -968,11 +966,10 @@ public class KelasiDB {
 
         ResultSet rs = ps.executeQuery();
 
-        
         int userID = 0;
         if (rs.next()) {
             userID = rs.getInt("user_id");
-            
+
         }
         rs.close();
         ps.close();
@@ -986,11 +983,9 @@ public class KelasiDB {
             ps.close();
         }
 
-    
         pool.freeConnection(connection);
     }
-    
-    
+
     //UDPDATE USER TO DEACTIVE HIM
     public static void deactiveUser(int userID, int schoolID, int loggedAdminID) throws NamingException, SQLException {
 
@@ -998,7 +993,7 @@ public class KelasiDB {
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
 
-        String q1 = "UPDATE users SET isActive='INACTIVE' WHERE id =? AND schoolID =? AND role= 'ADMIN' AND id <> ?" ;
+        String q1 = "UPDATE users SET isActive='INACTIVE' WHERE id =? AND schoolID =? AND role= 'ADMIN' AND id <> ?";
         ps = connection.prepareStatement(q1);
         ps.setInt(1, userID);
         ps.setInt(2, schoolID);
@@ -1006,11 +1001,9 @@ public class KelasiDB {
         ps.executeUpdate();
         ps.close();
 
-        
-       
         pool.freeConnection(connection);
     }
-    
+
     public static void activeUser(int userID, int schoolID) throws NamingException, SQLException {
 
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -1024,9 +1017,24 @@ public class KelasiDB {
         ps.executeUpdate();
         ps.close();
 
-        
-       
         pool.freeConnection(connection);
     }
-    
+
+    public static void updateSchoolLogo(int schoolID, String logoFileName) throws SQLException, NamingException {
+
+        String sql = "UPDATE school SET schoolLogo=? WHERE schoolID=?";
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, logoFileName);
+        ps.setInt(2, schoolID);
+
+        ps.executeUpdate();
+
+        ps.close();
+        pool.freeConnection(connection);
+    }
+
 }

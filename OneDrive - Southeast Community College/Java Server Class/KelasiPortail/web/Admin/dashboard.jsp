@@ -4,6 +4,8 @@
     Author     : kembe
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,6 +14,8 @@
     <title>Kelasi - Admin Dashboard</title>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 </head>
 
 <body>
@@ -22,6 +26,7 @@
     <div class="sidebar">
 
         <div class="brand">
+            
             <div class="brand-title">KELASI</div>
             <div class="brand-sub">${school.shortName}</div>
         </div>
@@ -43,7 +48,7 @@
             <div>
                 <h1>Dashboard</h1>
                 <div class="subtext">
-                    Welcome <b>${loggedInUser.userName}</b> (Role: <b>${loggedInUser.role}</b>)
+                    Welcome <b>${loggedInUser.userName}</b> (Role: 👤<b>${loggedInUser.role}</b>)
                 </div>
             </div>
 
@@ -61,25 +66,26 @@
         <div class="cards">
             <div class="card">
                 <div class="card-title">School</div>
-                <div class="card-value">${school.shortName}</div>
+                <div class="card-value"><i class="fa-solid fa-school"></i> ${school.shortName}</div>
                 <div class="card-note">${school.schoolName}</div>
             </div>
 
             <div class="card">
                 <div class="card-title">Users</div>
-                <div class="card-value">${requestScope.totalUsers}</div>
+                <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalUsers}</div>
                 <div class="card-note">Total accounts</div>
             </div>
 
             <div class="card">
                 <div class="card-title">Students</div>
-                <div class="card-value">${requestScope.totalStudents}</div>
+                
+                <div class="card-value"><i class="fa-solid fa-user-graduate"></i> ${requestScope.totalStudents}</div>
                 <div class="card-note">Registered students</div>
             </div>
 
             <div class="card">
                 <div class="card-title">Teachers</div>
-                <div class="card-value">${requestScope.totalTeachers}</div>
+                <div class="card-value"><i class="fa-solid fa-chalkboard-teacher"></i> ${requestScope.totalTeachers}</div>
                 <div class="card-note">Active teachers</div>
             </div>
         </div>
@@ -94,9 +100,10 @@
             <div class="info-grid">
                 <div class="info-item"><span>Name:</span> ${school.schoolName}</div>
                 <div class="info-item"><span>Short Name:</span> ${school.shortName}</div>
-                <div class="info-item"><span>Email:</span> ${school.schoolEmail}</div>
+               
+                <div class="info-item"><span>📧 Email:</span> ${school.schoolEmail}</div>
                 <div class="info-item"><span>Country:</span> ${school.country}</div>
-                <div class="info-item"><span>City:</span> ${school.schoolCity}</div>
+                <div class="info-item"><span> 📍 City:</span> ${school.schoolCity}</div>
                 <div class="info-item"><span>Website:</span> ${school.website}</div>
 
                <div class="info-item">
