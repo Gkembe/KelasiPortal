@@ -16,8 +16,10 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -55,6 +57,7 @@ public class Private extends HttpServlet {
 
         ArrayList<String> errors = new ArrayList<>();
 
+        ArrayList<String> wrong = new ArrayList<>();
         ArrayList<String> badMessage = new ArrayList<>();
 
         if (session != null) {
@@ -932,14 +935,12 @@ public class Private extends HttpServlet {
                     boolean isVali = true;
                     List<String> error = new ArrayList<>();
 
-                   
                     User loggedInUser2 = (User) session.getAttribute("loggedInUser");
                     if (loggedInUser2 == null) {
                         response.sendRedirect("Public?action=login");
                         return;
                     }
 
-                   
                     int schoolId = loggedInUser2.getSchoolID();
                     School sc = KelasiDB.getSchoolByID(schoolId);
 
@@ -983,13 +984,11 @@ public class Private extends HttpServlet {
 
                         KelasiDB.updateSchoolLogo(sc.getSchoolID(), sc.getSchoolLogo());
 
-                        
                         session.setAttribute("school", sc);
 
-                        
                         session.setAttribute("loggedInUser", loggedInUser2);
 
-                        request.setAttribute("successMessage", "✅ Logo updated successfully.");
+                        request.setAttribute("successMessage", "Logo updated successfully.");
                         response.sendRedirect(request.getContextPath() + "/Private?action=gotoSchoolProfile");
                         return;
                     }
@@ -1002,10 +1001,183 @@ public class Private extends HttpServlet {
 
                     break;
 
-                case "gotoEditProfile":
+                case "gotoEditSchoolProfile":
 
-                    url = "/edit.jsp";
+                    schoolID = loggedInUser.getSchoolID();
+                    school = KelasiDB.getSchoolByID(schoolID);
+                    request.setAttribute("school", school);
 
+                    url = "/Admin/editSchool.jsp";
+
+                    break;
+
+                case "editSchool":
+
+                    boolean isFine = true;
+                    
+                    
+
+                    // READ SCHOOL
+                    String schoolName = request.getParameter("schoolname");
+                    String shortName = request.getParameter("shortname");
+                    //String registrationN = request.getParameter("registrationNumber");
+                    String schoolType = request.getParameter("schooltype");
+                    String schoolLevel = request.getParameter("schoollevel");
+                    String country = request.getParameter("country");
+                    String schoolCity = request.getParameter("schoolcity");
+                    String schoolAddress = request.getParameter("schooladdress");
+                    String website = request.getParameter("website");
+                    String schoolEmail = request.getParameter("schoolemail");
+
+                    //VALIDATION SCHOOL
+                    if (schoolName == null || schoolName.trim().isEmpty() || schoolName.trim().length() < 3 || schoolName.trim().length() > 100) {
+                        wrong.add("School Name must be between 3 and 100 characters.");
+                        isFine = false;
+                    } else {
+                        schoolName = schoolName.trim();
+                    }
+
+                    if (shortName == null || shortName.trim().length() < 2 || shortName.trim().length() > 10) {
+                        wrong.add("Short Name must be 2-10 characters.");
+                        isFine = false;
+                    } else {
+                        shortName = shortName.trim();
+                        if (!shortName.matches("[A-Z0-9]+")) {
+                            wrong.add("Short Name must contain only uppercase letters and numbers.");
+                            isFine = false;
+                        }
+                    }
+
+                    if (website != null) {
+                        website = website.trim();
+                    }
+                    if (website != null && !website.isEmpty()) {
+                        if (!(website.startsWith("http://") || website.startsWith("https://"))) {
+                            wrong.add("Website must start with http:// or https://\n");
+                            isFine = false;
+                        }
+                    }
+                    if (schoolType == null || schoolType.isEmpty()) {
+
+                        wrong.add("Schoool Type cannot be empty.");
+                        isFine = false;
+                    } else if (!"PUBLIC".equals(schoolType) && !"PRIVATE".equals(schoolType)
+                            && !"CCHARTER".equals(schoolType) && !"RELIGION".equals(schoolType) && !"OTHER".equals(schoolType)) {
+
+                        wrong.add("Schoool Type cannot be different than the option.");
+                        isFine = false;
+                    } else if (schoolType != null) {
+
+                        schoolType = schoolType.trim();
+                    }
+                    if (schoolLevel == null || schoolLevel.isEmpty()) {
+                        wrong.add("Schoool Level cannot be empty.");
+                        isFine = false;
+
+                    } else if (!"PRIMARY".equals(schoolLevel) && !"MIDDLE".equals(schoolLevel)
+                            && !"HIGH".equals(schoolLevel) && !"COLLEGE".equals(schoolLevel) && !"UNIVERSITY".equals(schoolLevel)) {
+
+                        wrong.add("Schoool Level cannot be different than the option.");
+                        isFine = false;
+                    } else if (schoolLevel != null) {
+
+                        schoolLevel = schoolLevel.trim();
+                    }
+                    if (country == null || country.isEmpty()) {
+
+                        wrong.add("Country cannot be empty.");
+                        isFine = false;
+
+                    } else if (country != null) {
+
+                        country = country.trim();
+                    }
+
+                    if (schoolCity == null || schoolCity.isEmpty()) {
+
+                        wrong.add("City cannot be empty.");
+                        isFine = false;
+                    } else if (schoolCity.trim().length() > 60) {
+
+                        wrong.add("City cannot contain more than 60 characters.");
+                        isFine = false;
+                    } else {
+
+                        schoolCity = schoolCity.trim();
+
+                    }
+
+                    if (schoolAddress == null || schoolAddress.isEmpty()) {
+
+                        wrong.add("School Address cannot be empty.");
+                        isFine = false;
+                    } else if (schoolAddress.trim().length() > 120) {
+
+                        wrong.add("School Address cannot contain more than 120 characters.");
+                        isFine = false;
+                    } else {
+
+                        schoolAddress = schoolAddress.trim();
+
+                    }
+
+                    if (schoolEmail != null) {
+                        schoolEmail = schoolEmail.trim();
+                    }
+
+                    if (schoolEmail == null || schoolEmail.isEmpty()) {
+                        wrong.add("School email cannot be empty.");
+                        isFine = false;
+                    } else if (!schoolEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,}$")) {
+                        wrong.add("School email format is invalid (example: name@domain.com).");
+                        isFine = false;
+                    }
+                    if (schoolEmail.length() > 100) {
+                        wrong.add("School email is too long.");
+                        isFine = false;
+                    }
+
+                    if (!isFine) {
+                        request.setAttribute("wrong", wrong);
+                        url = "/Admin/editSchool.jsp";
+                        break;
+                    }
+
+                    School sch = new School();
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    sch.setSchoolID(schoolID);
+                    sch.setSchoolName(schoolName);
+                    sch.setShortName(shortName);
+                    sch.setSchoolType(schoolType);
+                    sch.setSchoolLevel(schoolLevel);
+                    sch.setSchoolAddress(schoolAddress);
+                    sch.setSchoolCity(schoolCity);
+                    sch.setWebsite(website);
+                    sch.setSchoolEmail(schoolEmail);
+                    sch.setCountry(country);
+                    
+
+                    sch.setIsActive(true);
+
+                    int rows = KelasiDB.updateSchool(sch);
+
+                    if (rows > 0) {
+
+                        request.setAttribute("success", "School updated successfully.");
+
+                        request.setAttribute("school", sch);
+
+                        //url = "/Admin/schoolProfile.jsp";
+                        response.sendRedirect(request.getContextPath() + "/Private?action=gotoSchoolProfile");
+                        return;
+                    } else {
+
+                        wrong.add("Update failed. Please try again.");
+                        request.setAttribute("wrong", wrong);
+                        url = "/Admin/editSchool.jsp";
+                    }
                     break;
                 default:
                     url = "/index.jsp";

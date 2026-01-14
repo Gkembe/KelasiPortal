@@ -304,7 +304,7 @@ public class Public extends HttpServlet {
                             isValid = false;
                         }
 
-                        // nom du fichier
+                        // name of file
                         String originalName = Paths.get(logoPart.getSubmittedFileName())
                                 .getFileName()
                                 .toString();
@@ -312,7 +312,7 @@ public class Public extends HttpServlet {
                         // extension
                         String ext = originalName.substring(originalName.lastIndexOf('.') + 1);
 
-                        // nom sécurisé (unique)
+                        // name security
                         logoFileName = "school_" + System.currentTimeMillis() + "." + ext;
                     }
 

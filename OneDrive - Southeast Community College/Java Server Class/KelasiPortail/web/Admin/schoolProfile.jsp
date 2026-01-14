@@ -21,7 +21,7 @@
 
         <div class="layout">
 
-            <!-- SIDEBAR -->
+          
             <div class="sidebar">
 
                 <div class="brand">
@@ -39,10 +39,10 @@
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-            <!-- CONTENT -->
+           
             <div class="content">
 
-                <!-- TOP BAR -->
+                
                 <div class="topbar">
                     <div>
                         <h1>Profile</h1>
@@ -65,11 +65,11 @@
                     </div>
                 </div>
 
-                <!-- STATS CARDS  -->
+       
                 <div class="cards">
 
 
-                    <!-- SCHOOL INFO -->
+                 
                     <div class="section">
                         <div class="section-header">
                             <h2>School Information</h2>
@@ -105,7 +105,7 @@
                         </div>
                     </div>
 
-                    <!-- QUICK ACTIONS -->
+                    
                     <div class="section">
                         <h2>Quick Actions</h2>
                         <div class="actions">

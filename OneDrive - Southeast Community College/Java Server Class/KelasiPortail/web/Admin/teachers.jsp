@@ -19,7 +19,7 @@
 
 
         <div class="layout">
-            <!-- SIDEBAR -->
+            
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>

@@ -49,7 +49,7 @@
         </style>
         <div class="layout">
 
-            <!-- SIDEBAR -->
+          
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -65,7 +65,7 @@
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-            <!-- CONTENT -->
+           
             <div class="content">
 
                 <div class="topbar">

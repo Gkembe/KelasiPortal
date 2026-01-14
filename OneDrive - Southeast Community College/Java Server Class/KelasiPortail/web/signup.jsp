@@ -66,6 +66,7 @@
                         </select> 
                     </div>
                     <div class="input-group">
+                        <label for="schoolLevel">School Level</label>
                         <select id="schoolLevel" name="schoollevel" >
                             <option value="">-- Select level --</option>
                             <option value="PRIMARY">Primary School</option>

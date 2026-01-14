@@ -245,13 +245,13 @@ h1{
 
 /* TABLE */
 .tables{
-    margin-top: 10px;          /* au lieu de 100px */
-    overflow-x: auto;          /* si petit écran, scroll horizontal */
+    margin-top: 10px;          
+    overflow-x: auto;          
 
 }
 
 .table{
-    width: 100%;               /* au lieu de 105% */
+    width: 100%;               
     border-collapse: collapse;
     margin-top: 10px;
 
@@ -262,7 +262,7 @@ h1{
     border: 1px solid #e5e7eb;
     text-align: left;
     font-size: 14px;
-    white-space: nowrap;       /* évite que ça casse en 2 lignes */
+    white-space: nowrap;       
 }
 
 
@@ -312,7 +312,7 @@ h1{
 
 /* Teachers Form */
 
-/* ===== Teacher Page Layout Fix ===== */
+
 
 .content {
     flex: 1;
@@ -320,20 +320,20 @@ h1{
     box-sizing: border-box;
 }
 
-/* la section/card ne doit pas prendre 100% de la page */
+
 .section {
-    max-width: 980px;     /* IMPORTANT */
+    max-width: 980px;     
     width: 100%;
 }
 
-/* Grid form propre */
+
 .form-grid{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
 
-/* champ qui doit prendre toute la ligne (si tu veux) */
+
 .form-row.full{
     grid-column: 1 / -1;
 }
@@ -343,7 +343,7 @@ h1{
     box-sizing: border-box;
 }
 
-/* boutons alignés comme dashboard */
+
 .actions{
     margin-top: 16px;
     display: flex;

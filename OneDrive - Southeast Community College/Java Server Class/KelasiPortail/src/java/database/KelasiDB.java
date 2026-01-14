@@ -409,13 +409,13 @@ public class KelasiDB {
         try {
             conn.setAutoCommit(false);
 
-            // 1. insert user
+          
             int userID = insertUser(conn, user);
 
-            // 2. lier teacher au user
+           
             teacher.setUserID(userID);
 
-            // 3. insert teacher
+           
             insertTeacher(conn, teacher);
 
             conn.commit();
@@ -1036,5 +1036,43 @@ public class KelasiDB {
         ps.close();
         pool.freeConnection(connection);
     }
+
+    //EDIT SCHOOL INFO
+    
+    
+    public static int updateSchool(School school) throws SQLException, NamingException {
+
+    ConnectionPool pool = ConnectionPool.getInstance();
+    Connection connection = pool.getConnection();
+    PreparedStatement ps = null;
+
+    String sql = "UPDATE school "
+            + "SET schoolName = ?, shortName = ?, schoolType = ?, schoolLevel = ?, "
+            + "country = ?, city = ?, schoolAddress = ?, website = ?, schoolEmail = ?, isActive = ? "
+            + "WHERE schoolID = ?";
+
+    try {
+        ps = connection.prepareStatement(sql);
+
+        ps.setString(1,  school.getSchoolName());
+        ps.setString(2,  school.getShortName());
+        ps.setString(3,  school.getSchoolType());
+        ps.setString(4,  school.getSchoolLevel());
+        ps.setString(5,  school.getCountry());
+        ps.setString(6,  school.getSchoolCity());     
+        ps.setString(7,  school.getSchoolAddress());
+        ps.setString(8,  school.getWebsite());
+        ps.setString(9,  school.getSchoolEmail());
+        ps.setBoolean(10, school.isActive());
+        ps.setInt(11, school.getSchoolID());
+
+        return ps.executeUpdate();
+
+    } finally {
+        if (ps != null) ps.close();
+        pool.freeConnection(connection);
+    }
+}
+
 
 }
