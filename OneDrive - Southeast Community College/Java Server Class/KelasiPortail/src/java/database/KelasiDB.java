@@ -1074,5 +1074,55 @@ public class KelasiDB {
     }
 }
 
+    
+    //search for student by studentID
+    
+    
+    
+    public static LinkedHashMap<String, Students> selectStudentsByID(int schoolID, String studentID) throws NamingException, SQLException {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT schoolID, userID, registrationNumber, firstName, lastName,"
+                + " gender, dateOfBirth, gradeLevel, department, enrollmentDate, academicYear,"
+                + " phone, address, isActive, createdAt, updatedAt FROM students WHERE schoolID = ? AND registrationNumber =? ORDER BY firstName";
+
+        ps = connection.prepareStatement(query);
+        ps.setInt(1, schoolID);
+        ps.setString(2, studentID);
+
+        rs = ps.executeQuery();
+
+        LinkedHashMap<String, Students> student = new LinkedHashMap<>();
+        while (rs.next()) {
+            Students s = new Students();
+            s.setUserID(rs.getInt("userID"));
+            s.setFirstName(rs.getString("firstName"));
+            s.setLastName(rs.getString("lastName"));
+            s.setSchoolID(rs.getInt("schoolID"));
+            s.setRegistrationNumber(rs.getString("registrationNumber"));
+            s.setGender(rs.getString("gender"));
+            s.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+            s.setGradeLevel(rs.getString("gradeLevel"));
+            s.setDepartment(rs.getString("department"));
+            s.setEnrollmentDate(rs.getDate("enrollmentDate").toLocalDate());
+            s.setAcademicYear(rs.getString("academicYear"));
+            s.setPhoneNumber(rs.getString("phone"));
+            s.setAddress(rs.getString("address"));
+            s.setIsActive(rs.getString("isActive"));
+            s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
+            s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
+
+            student.put(s.getRegistrationNumber(), s);
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return student;
+    }
 
 }

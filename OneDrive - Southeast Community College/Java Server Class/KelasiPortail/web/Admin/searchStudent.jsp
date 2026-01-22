@@ -17,11 +17,10 @@
     </head>
     <body>
 
-       
-
+        
         <div class="layout">
 
-
+           
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -37,13 +36,14 @@
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-
+           
             <div class="content">
 
                 <div class="topbar">
                     <div>
                         <h1><i class="fa-solid fa-user-graduate"></i> Students</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
+                        
                         <div class="searchDiv">
                             <form class="forms" action="Private" method="post">
 
@@ -61,16 +61,10 @@
 
                     <br>
                 </div>
-
-
-
-
-
-                <!-- Original -->
-                <div class="section">
+                     <div class="section">
                     <div class="section-header">
-                        <h2>Students List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddStudent">+ Add Student</a>
+                        <h2>Student Found</h2>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=listStudents">Cancel</a>
                     </div>
 
 
@@ -102,16 +96,16 @@
                             <tbody>
                                 <c:choose> 
 
-                                    <c:when test="${empty student}">
+                                    <c:when test="${empty getStudent}">
 
 
                                         <tr>
-                                            <td colspan="13" class="empty">No student found.</td>
+                                            <td colspan="16" class="empty">No student found.</td>
                                         </tr>
 
                                     </c:when>
                                     <c:otherwise>
-                                        <c:forEach var="s" items="${student.values()}">
+                                        <c:forEach var="s" items="${getStudent.values()}">
                                             <tr>
                                                 <td>${s.registrationNumber}</td>
                                                 <td>${s.firstName}</td>
@@ -128,15 +122,13 @@
                                                 <td>${s.getCreatedFormattedTime()}</td>
                                                 <td>${s.getUpdatedFormattedTime()}</td>
                                                 <td><a class="status-btn disabled" 
-                                                       href="${pageContext.request.contextPath}/Private?action=inactiveStudent&registrationNumber=${s.registrationNumber}"
+                                                       href="${pageContext.request.contextPath}/Private?action=inactiveStudentSearch&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to deactive this student?')"
                                                        >DISABLE</a></td>
                                                 <td><a class="status-btn activate"
-                                                       href="${pageContext.request.contextPath}/Private?action=activeStudent&registrationNumber=${s.registrationNumber}"
+                                                       href="${pageContext.request.contextPath}/Private?action=activeStudentSearch&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to active this student?')"
                                                        >ACTIVATE</a></td>
-
-
 
                                             </tr>
                                         </c:forEach>

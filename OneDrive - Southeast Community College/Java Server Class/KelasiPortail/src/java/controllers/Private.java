@@ -1178,7 +1178,56 @@ public class Private extends HttpServlet {
                         request.setAttribute("wrong", wrong);
                         url = "/Admin/editSchool.jsp";
                     }
+                    break; 
+                    
+                case "searchStudent":
+                    
+                    String studentID = request.getParameter("studentID");
+                  
+                    schoolID = loggedInUser.getSchoolID();
+                    school = KelasiDB.getSchoolByID(schoolID);
+
+                    if(studentID != null){
+                    LinkedHashMap<String, Students> getStudent = KelasiDB.selectStudentsByID(schoolID, studentID);
+
+                    request.setAttribute("getStudent", getStudent);
+     
+                    }
+                    
+                    request.setAttribute("school", school);
+                    url = "/Admin/searchStudent.jsp";
+                   
                     break;
+                    
+                //Inable or able student after search
+                    
+                    
+                case "inactiveStudentSearch":
+                    String registrationNu = request.getParameter("registrationNumber");
+
+                    schoolID = loggedInUser.getSchoolID();
+                  
+                    KelasiDB.deactiveStudent(registrationNu, schoolID);
+
+                    response.sendRedirect("Private?action=searchStudent&studentID=" + registrationNu);
+                    return;
+                //break;
+
+                case "activeStudentSearch":
+
+                    String registrationN = request.getParameter("registrationNumber");
+
+                    schoolID = loggedInUser.getSchoolID();
+                   
+
+                    KelasiDB.activeStudent(registrationN, schoolID);
+
+                    
+                    response.sendRedirect("Private?action=searchStudent&studentID=" + registrationN);
+                    
+
+                    return;
+
                 default:
                     url = "/index.jsp";
                     break;
