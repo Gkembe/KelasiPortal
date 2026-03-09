@@ -19,7 +19,7 @@ public class School implements Serializable{
     private String shortName;
     private String registrationNumber;
     private String schoolType;
-    private String schoolLevel;
+    
     private String country;
     private String schoolCity;
     private String schoolAddress;
@@ -31,14 +31,14 @@ public class School implements Serializable{
     
     public School (){}
 
-    public School(int schoolID, String schoolName, String shortName, String registrationNumber, String schoolType, String schoolLevel, 
+    public School(int schoolID, String schoolName, String shortName, String registrationNumber, String schoolType, 
             String country, String schoolCity, String schoolAddress, String schoolEmail, String website, String schoolLogo, boolean isActive, LocalDateTime createdAT) {
         this.schoolID = schoolID;
         this.schoolName = schoolName;
         this.shortName = shortName;
         this.registrationNumber = registrationNumber;
         this.schoolType = schoolType;
-        this.schoolLevel = schoolLevel;
+      
         this.country = country;
         this.schoolCity = schoolCity;
         this.schoolAddress = schoolAddress;
@@ -48,13 +48,13 @@ public class School implements Serializable{
         this.isActive = isActive;
     }
 
-    public School(String schoolName, String shortName, String registrationNumber, String schoolType, String schoolLevel, String country, 
+    public School(String schoolName, String shortName, String registrationNumber, String schoolType, String country, 
             String schoolCity, String schoolAddress, String schoolEmail, String website, String schoolLogo, boolean isActive) {
         this.schoolName = schoolName;
         this.shortName = shortName;
         this.registrationNumber = registrationNumber;
         this.schoolType = schoolType;
-        this.schoolLevel = schoolLevel;
+        
         this.country = country;
         this.schoolCity = schoolCity;
         this.schoolAddress = schoolAddress;
@@ -106,13 +106,7 @@ public class School implements Serializable{
         this.schoolType = schoolType;
     }
 
-    public String getSchoolLevel() {
-        return schoolLevel;
-    }
-
-    public void setSchoolLevel(String schoolLevel) {
-        this.schoolLevel = schoolLevel;
-    }
+    
 
     public String getCountry() {
         return country;

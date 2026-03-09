@@ -15,7 +15,7 @@
 
 
         <div class="layout">
-    
+
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -27,7 +27,8 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
@@ -72,7 +73,7 @@
                                 <input type="text" class="form-input" name="shortname" value="${school.shortName}"/>
                             </div>
 
-                            
+
                             <div class="form-row">
 
 

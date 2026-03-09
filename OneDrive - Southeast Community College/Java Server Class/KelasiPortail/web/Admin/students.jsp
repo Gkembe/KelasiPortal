@@ -17,7 +17,7 @@
     </head>
     <body>
 
-       
+
 
         <div class="layout">
 
@@ -33,7 +33,8 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
@@ -70,7 +71,7 @@
                 <div class="section">
                     <div class="section-header">
                         <h2>Students List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddStudent">+ Add Student</a>
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoChooseSection">+ Add Student</a>
                     </div>
 
 
@@ -83,8 +84,7 @@
                                     <th>Last Name</th>
                                     <th>Gender</th>
                                     <th>Birth Date</th>
-                                    <th>Grade Level</th>
-                                    <th>Department</th>
+
                                     <th>Enrollment Date</th>
                                     <th>Academic Year</th>
                                     <th>Phone Number</th>
@@ -106,7 +106,7 @@
 
 
                                         <tr>
-                                            <td colspan="13" class="empty">No student found.</td>
+                                            <td colspan="11" class="empty">No student found.</td>
                                         </tr>
 
                                     </c:when>
@@ -118,8 +118,7 @@
                                                 <td>${s.lastName}</td>
                                                 <td>${s.gender}</td>
                                                 <td>${s.dateOfBirth}</td>
-                                                <td>${s.gradeLevel}</td>
-                                                <td>${s.department}</td>
+
                                                 <td>${s.enrollmentDate}</td>
                                                 <td>${s.academicYear}</td>
                                                 <td>${s.phoneNumber}</td>

@@ -4,11 +4,21 @@
  */
 package controllers;
 
+import business.Department;
+import business.Levels;
 import business.School;
+import business.SchoolCycle;
+
 import business.Students;
 import business.Teachers;
 import business.User;
-import database.KelasiDB;
+import database.DepartmentDB;
+import database.UserDB;
+import database.LevelDB;
+import database.SchoolDB;
+import database.StudentDB;
+import database.TeacherDB;
+import database.SchoolCycleDB;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -59,7 +69,10 @@ public class Private extends HttpServlet {
 
         ArrayList<String> wrong = new ArrayList<>();
         ArrayList<String> badMessage = new ArrayList<>();
+        ArrayList<String> ERRORS = new ArrayList<>();
+        ArrayList<String> departmentError = new ArrayList<>();
 
+        int sectionDep = 0;
         if (session != null) {
 
             loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -87,13 +100,15 @@ public class Private extends HttpServlet {
 
                     int schoolID = loggedInUser.getSchoolID();
 
-                    School school = KelasiDB.getSchoolByID(schoolID);
+                    School school = SchoolDB.getSchoolByID(schoolID);
 
-                    int totalUsers = KelasiDB.countUsersBySchool(schoolID);
-                    int totalTeachers = KelasiDB.countUsersByRoleAndSchool("TEACHER", schoolID);
-                    int totalStudents = KelasiDB.countUsersByRoleAndSchool("STUDENT", schoolID);
+                    int totalUsers = UserDB.countUsersBySchool(schoolID);
+                    int totalAdmin = UserDB.countUsersByRoleAndSchool("Admin", schoolID);;
+                    int totalTeachers = UserDB.countUsersByRoleAndSchool("TEACHER", schoolID);
+                    int totalStudents = UserDB.countUsersByRoleAndSchool("STUDENT", schoolID);
 
                     request.setAttribute("totalUsers", totalUsers);
+                    request.setAttribute("totalAdmin", totalAdmin);
                     request.setAttribute("totalTeachers", totalTeachers);
                     request.setAttribute("totalStudents", totalStudents);
 
@@ -105,9 +120,9 @@ public class Private extends HttpServlet {
                 case "listUsers":
 
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
 
-                    LinkedHashMap<String, User> users = KelasiDB.selectAllUsersByID(schoolID);
+                    LinkedHashMap<String, User> users = UserDB.selectAllUsersByID(schoolID);
 
                     request.setAttribute("users", users);
                     request.setAttribute("school", school);
@@ -116,7 +131,7 @@ public class Private extends HttpServlet {
                     break;
                 case "gotoAddTeacher":
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
                     request.setAttribute("school", school);
                     url = "/Admin/teachers.jsp";
 
@@ -217,7 +232,7 @@ public class Private extends HttpServlet {
                         isValid = false;
                     } else {
                         username = username.trim();
-                        if (KelasiDB.usernameExists(username)) {
+                        if (UserDB.usernameExists(username)) {
                             errors.add("Username already exists.");
                             isValid = false;
                         }
@@ -228,7 +243,7 @@ public class Private extends HttpServlet {
                         isValid = false;
                     } else {
                         adminEmail = adminEmail.trim();
-                        if (KelasiDB.adminEmailExists(adminEmail)) {
+                        if (UserDB.adminEmailExists(adminEmail)) {
                             errors.add("Admin email already exists.");
                             isValid = false;
                         }
@@ -278,6 +293,9 @@ public class Private extends HttpServlet {
 
                     // STOP HERE if invalid 
                     if (!isValid) {
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        request.setAttribute("school", school);
                         request.setAttribute("errors", errors);
                         url = "/Admin/teachers.jsp";
                         break;
@@ -320,7 +338,7 @@ public class Private extends HttpServlet {
 
                     //DB (transaction)
                     try {
-                        boolean ok = KelasiDB.registerTeacher(user, teacher);
+                        boolean ok = TeacherDB.registerTeacher(user, teacher);
 
                         if (ok) {
                             request.setAttribute("message", "Registration successful.");
@@ -339,9 +357,9 @@ public class Private extends HttpServlet {
 
                     schoolID = loggedInUser.getSchoolID();
 
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
 
-                    LinkedHashMap<String, Teachers> teachers = KelasiDB.selectAllTeachersByID(schoolID);
+                    LinkedHashMap<String, Teachers> teachers = TeacherDB.selectAllTeachersByID(schoolID);
 
                     request.setAttribute("teachers", teachers);
                     request.setAttribute("school", school);
@@ -350,32 +368,85 @@ public class Private extends HttpServlet {
 
                     break;
 
-                case "gotoAddStudent":
+                case "gotoChooseSection":
+
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    LinkedHashMap<String, Department> departments
+                            = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
+
+                    request.setAttribute("departments", departments.values());
+                    request.setAttribute("school", school);
+                    url = "/Admin/chooseSection.jsp";
+                    break;
+                case "gotoAddStudent":
+
+                    boolean isDepOk = true;
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    String deptIdStr = request.getParameter("departmentID");
+
+                    if (deptIdStr == null || deptIdStr.trim().isEmpty()) {
+
+                        departmentError.add("Please select Section.");
+                        isDepOk = false;
+                    } else {
+
+                        sectionDep = Integer.parseInt(deptIdStr);
+
+                    }
+
+                    if (!isDepOk) {
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        String deptarIdStr = request.getParameter("departmentID");
+
+                         sectionDep = Integer.parseInt(deptarIdStr);
+                        LinkedHashMap<String, Department> dep
+                                = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
+
+                        
+                        request.setAttribute("departments", dep.values());
+                        request.setAttribute("departmentID", sectionDep);
+                        request.setAttribute("school", school);
+                        request.setAttribute("errors", departmentError);
+                        url = "/Admin/chooseSection.jsp";
+                        break;
+                    }
+
+                    LinkedHashMap<String, Levels> ll
+                            = LevelDB.selectLevelBySchoolAndDepartment(schoolID, sectionDep);
+                    request.setAttribute("levels", ll);
+                    request.setAttribute("departmentID", sectionDep);
                     request.setAttribute("school", school);
                     url = "/Admin/addStudents.jsp";
                     break;
-
                 case "addStudent":
 
                     //GET PARAMETERES FOR STUDENT 
                     boolean isOk = true;
 
+                    String depetIdStr = request.getParameter("departmentID");
+                    
+                    sectionDep = Integer.parseInt(depetIdStr);
                     String registrationNumber = request.getParameter("registrationNumber");
                     String SFirstName = request.getParameter("firstName");
                     String SLastName = request.getParameter("lastName");
                     String gender = request.getParameter("gender");
                     String birthDates = request.getParameter("birthDate");
                     String gradeLevel = request.getParameter("gradeLevel");
-                    String department = request.getParameter("department");
+                    
                     String enrollmentDates = request.getParameter("enrollmentDate");
                     String academicYear = request.getParameter("academicYear");
                     String SphoneNumber = request.getParameter("phoneNumber");
                     String address = request.getParameter("address");
                     String SisActive = request.getParameter("isActive");
+                    String theLevel = request.getParameter("levelID");
                     LocalDate birthDate = null;
                     LocalDate enrollmentDate = null;
+
+                    int theLevels = 0;
 
                     //GET PARAMETERS FOR ADMIN STUDENT 
                     String Susername = request.getParameter("username");
@@ -395,7 +466,7 @@ public class Private extends HttpServlet {
                     } else {
 
                         registrationNumber = registrationNumber.trim();
-                        if (KelasiDB.reistrationNumberForStudentExists(registrationNumber)) {
+                        if (StudentDB.reistrationNumberForStudentExists(registrationNumber)) {
                             badMessage.add("This student ID already exist for another student. It must be unique.");
                             isOk = false;
 
@@ -420,6 +491,16 @@ public class Private extends HttpServlet {
                         isOk = false;
                     } else {
                         SLastName = SLastName.trim();
+
+                    }
+                    if (theLevel == null || theLevel.trim().isEmpty()) {
+
+                        errors.add("You must select Student Level");
+                        isOk = false;
+
+                    } else {
+
+                        theLevels = Integer.parseInt(theLevel);
 
                     }
 
@@ -459,18 +540,7 @@ public class Private extends HttpServlet {
                         gradeLevel = gradeLevel.trim();
                     }
 
-                    if (department == null || department.isEmpty()) {
-
-                        badMessage.add("Department cannot be empty.");
-                        isOk = false;
-                    } else if (department.length() > 100) {
-
-                        badMessage.add("Department cannot be more than 100 characters.");
-                        isOk = false;
-                    } else {
-
-                        department = department.trim();
-                    }
+                    
                     if (enrollmentDates == null || enrollmentDates.isEmpty()) {
 
                         badMessage.add("Enrollment Date cannot be empty.");
@@ -538,7 +608,7 @@ public class Private extends HttpServlet {
                         isOk = false;
                     } else {
                         username = Susername.trim();
-                        if (KelasiDB.usernameExists(Susername)) {
+                        if (UserDB.usernameExists(Susername)) {
                             badMessage.add("Username already exists.");
                             isOk = false;
                         }
@@ -549,7 +619,7 @@ public class Private extends HttpServlet {
                         isOk = false;
                     } else {
                         SadminEmail = SadminEmail.trim();
-                        if (KelasiDB.adminEmailExists(SadminEmail)) {
+                        if (UserDB.adminEmailExists(SadminEmail)) {
                             badMessage.add("Admin email already exists.");
                             isOk = false;
                         }
@@ -598,6 +668,16 @@ public class Private extends HttpServlet {
                     }
                     // STOP HERE if invalid 
                     if (!isOk) {
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        request.setAttribute("school", school);
+                        String depetaIdStr = request.getParameter("departmentID");
+                        sectionDep = Integer.parseInt(depetIdStr);
+                        LinkedHashMap<String, Levels> l
+                                = LevelDB.selectLevelBySchoolAndDepartment(schoolID, sectionDep);
+
+                        request.setAttribute("levels", l);
+                        request.setAttribute("departmentID", sectionDep);
                         request.setAttribute("badMessage", badMessage);
                         url = "/Admin/addStudents.jsp";
                         break;
@@ -613,13 +693,13 @@ public class Private extends HttpServlet {
                     s.setLastName(SLastName);
                     s.setGender(gender);
                     s.setDateOfBirth(birthDate);
-                    s.setGradeLevel(gradeLevel);
-                    s.setDepartment(department);
+
                     s.setEnrollmentDate(enrollmentDate);
                     s.setAcademicYear(academicYear);
                     s.setPhoneNumber(SphoneNumber);
                     s.setAddress(address);
                     s.setIsActive(SisActive);
+                    s.setLevelID(theLevels);
 
                     // Hash password
                     String hashed = null;
@@ -645,7 +725,7 @@ public class Private extends HttpServlet {
 
                     //DB (transaction)
                     try {
-                        boolean good = KelasiDB.registerStudent(u, s);
+                        boolean good = StudentDB.registerStudent(u, s);
 
                         if (good) {
 
@@ -672,9 +752,9 @@ public class Private extends HttpServlet {
 
                     schoolID = loggedInUser.getSchoolID();
 
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
 
-                    LinkedHashMap<String, Students> student = KelasiDB.selectAllStudentsByID(schoolID);
+                    LinkedHashMap<String, Students> student = StudentDB.selectAllStudentsByID(schoolID);
 
                     request.setAttribute("student", student);
                     request.setAttribute("school", school);
@@ -688,7 +768,7 @@ public class Private extends HttpServlet {
                     schoolID = loggedInUser.getSchoolID();
                     //school = KelasiDB.getSchoolByID(schoolID);
 
-                    KelasiDB.deactiveStudent(registrationNumb, schoolID);
+                    StudentDB.deactiveStudent(registrationNumb, schoolID);
 
                     response.sendRedirect("Private?action=listStudents");
                     return;
@@ -701,7 +781,7 @@ public class Private extends HttpServlet {
                     schoolID = loggedInUser.getSchoolID();
                     //school = KelasiDB.getSchoolByID(schoolID);
 
-                    KelasiDB.activeStudent(registrationNum, schoolID);
+                    StudentDB.activeStudent(registrationNum, schoolID);
 
                     response.sendRedirect("Private?action=listStudents");
 
@@ -710,7 +790,7 @@ public class Private extends HttpServlet {
                 case "gotoAddUser":
 
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
                     request.setAttribute("school", school);
                     url = "/Admin/addUsers.jsp";
 
@@ -734,7 +814,7 @@ public class Private extends HttpServlet {
                         isOk = false;
                     } else {
                         aUsername = aUsername.trim();
-                        if (KelasiDB.usernameExists(aUsername)) {
+                        if (UserDB.usernameExists(aUsername)) {
                             badMessage.add("Username already exists.");
                             isGood = false;
                         }
@@ -745,7 +825,7 @@ public class Private extends HttpServlet {
                         isGood = false;
                     } else {
                         SadminEmail = aAdminEmail.trim();
-                        if (KelasiDB.adminEmailExists(SadminEmail)) {
+                        if (UserDB.adminEmailExists(SadminEmail)) {
                             badMessage.add("Admin email already exists.");
                             isGood = false;
                         }
@@ -824,7 +904,7 @@ public class Private extends HttpServlet {
                     User us = new User(aUsername, hashedPass, aRole, aAdminEmail, aAdminPhone, schoolID, isActiv);
 
                     try {
-                        KelasiDB.insertAdmin(us);
+                        UserDB.insertAdmin(us);
 
                         if (isGood) {
 
@@ -854,7 +934,7 @@ public class Private extends HttpServlet {
 
                     int teacherid = Integer.parseInt(teacherID);
 
-                    KelasiDB.deactiveTeacher(teacherid, schoolID);
+                    TeacherDB.deactiveTeacher(teacherid, schoolID);
 
                     response.sendRedirect("Private?action=listTeachers");
 
@@ -869,7 +949,7 @@ public class Private extends HttpServlet {
                     //school = KelasiDB.getSchoolByID(schoolID);
 
                     int teacherIDS = Integer.parseInt(teacherId);
-                    KelasiDB.activeTeacher(teacherIDS, schoolID);
+                    TeacherDB.activeTeacher(teacherIDS, schoolID);
 
                     response.sendRedirect("Private?action=listTeachers");
 
@@ -897,12 +977,12 @@ public class Private extends HttpServlet {
 
                     }
 
-                    KelasiDB.deactiveUser(userId, schoolID, userIDS);
+                    UserDB.deactiveUser(userId, schoolID, userIDS);
 
                     response.sendRedirect("Private?action=listUsers");
 
                     return;
-                //break;
+                //break;                //break;
 
                 case "activeUser":
 
@@ -912,7 +992,7 @@ public class Private extends HttpServlet {
                     //school = KelasiDB.getSchoolByID(schoolID);
 
                     int userID = Integer.parseInt(userid);
-                    KelasiDB.activeUser(userID, schoolID);
+                    UserDB.activeUser(userID, schoolID);
 
                     response.sendRedirect("Private?action=listUsers");
 
@@ -922,10 +1002,14 @@ public class Private extends HttpServlet {
 
                     schoolID = loggedInUser.getSchoolID();
 
-                    School schools = KelasiDB.getSchoolByID(schoolID);
+                    School schools = SchoolDB.getSchoolByID(schoolID);
+
+                    //SchoolCycle cycles = SchoolCycleDB.getCycleByID(schoolID);
+                    LinkedHashMap<String, SchoolCycle> cycles = SchoolCycleDB.selectAllCycleByID(schoolID);
 
                     request.setAttribute("loggedInUser", loggedInUser);
                     request.setAttribute("school", schools);
+                    request.setAttribute("cycles", cycles);
 
                     url = "/Admin/schoolProfile.jsp";
                     break;
@@ -942,7 +1026,7 @@ public class Private extends HttpServlet {
                     }
 
                     int schoolId = loggedInUser2.getSchoolID();
-                    School sc = KelasiDB.getSchoolByID(schoolId);
+                    School sc = SchoolDB.getSchoolByID(schoolId);
 
                     Part logoPart = request.getPart("schoollogo");
                     String logoFileName = null;
@@ -982,7 +1066,7 @@ public class Private extends HttpServlet {
 
                         sc.setSchoolLogo(logoFileName);
 
-                        KelasiDB.updateSchoolLogo(sc.getSchoolID(), sc.getSchoolLogo());
+                        SchoolDB.updateSchoolLogo(sc.getSchoolID(), sc.getSchoolLogo());
 
                         session.setAttribute("school", sc);
 
@@ -1004,7 +1088,7 @@ public class Private extends HttpServlet {
                 case "gotoEditSchoolProfile":
 
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
                     request.setAttribute("school", school);
 
                     url = "/Admin/editSchool.jsp";
@@ -1014,8 +1098,6 @@ public class Private extends HttpServlet {
                 case "editSchool":
 
                     boolean isFine = true;
-                    
-                    
 
                     // READ SCHOOL
                     String schoolName = request.getParameter("schoolname");
@@ -1151,17 +1233,16 @@ public class Private extends HttpServlet {
                     sch.setSchoolName(schoolName);
                     sch.setShortName(shortName);
                     sch.setSchoolType(schoolType);
-                    sch.setSchoolLevel(schoolLevel);
+
                     sch.setSchoolAddress(schoolAddress);
                     sch.setSchoolCity(schoolCity);
                     sch.setWebsite(website);
                     sch.setSchoolEmail(schoolEmail);
                     sch.setCountry(country);
-                    
 
                     sch.setIsActive(true);
 
-                    int rows = KelasiDB.updateSchool(sch);
+                    int rows = SchoolDB.updateSchool(sch);
 
                     if (rows > 0) {
 
@@ -1178,36 +1259,34 @@ public class Private extends HttpServlet {
                         request.setAttribute("wrong", wrong);
                         url = "/Admin/editSchool.jsp";
                     }
-                    break; 
-                    
+                    break;
+
                 case "searchStudent":
-                    
+
                     String studentID = request.getParameter("studentID");
-                  
+
                     schoolID = loggedInUser.getSchoolID();
-                    school = KelasiDB.getSchoolByID(schoolID);
+                    school = SchoolDB.getSchoolByID(schoolID);
 
-                    if(studentID != null){
-                    LinkedHashMap<String, Students> getStudent = KelasiDB.selectStudentsByID(schoolID, studentID);
+                    if (studentID != null) {
+                        LinkedHashMap<String, Students> getStudent = StudentDB.selectStudentsByID(schoolID, studentID);
 
-                    request.setAttribute("getStudent", getStudent);
-     
+                        request.setAttribute("getStudent", getStudent);
+
                     }
-                    
+
                     request.setAttribute("school", school);
                     url = "/Admin/searchStudent.jsp";
-                   
+
                     break;
-                    
+
                 //Inable or able student after search
-                    
-                    
                 case "inactiveStudentSearch":
                     String registrationNu = request.getParameter("registrationNumber");
 
                     schoolID = loggedInUser.getSchoolID();
-                  
-                    KelasiDB.deactiveStudent(registrationNu, schoolID);
+
+                    StudentDB.deactiveStudent(registrationNu, schoolID);
 
                     response.sendRedirect("Private?action=searchStudent&studentID=" + registrationNu);
                     return;
@@ -1218,15 +1297,250 @@ public class Private extends HttpServlet {
                     String registrationN = request.getParameter("registrationNumber");
 
                     schoolID = loggedInUser.getSchoolID();
-                   
 
-                    KelasiDB.activeStudent(registrationN, schoolID);
+                    StudentDB.activeStudent(registrationN, schoolID);
 
-                    
                     response.sendRedirect("Private?action=searchStudent&studentID=" + registrationN);
-                    
 
                     return;
+
+                //SEARCH TEACHER BY NAME
+                case "searchTeacher":
+
+                    String teacherName = request.getParameter("teacherName");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    if (teacherName != null) {
+                        LinkedHashMap<String, Teachers> getTeacher = TeacherDB.searchTeachersByName(schoolID, teacherName);
+
+                        request.setAttribute("getTeacher", getTeacher);
+
+                    }
+
+                    request.setAttribute("school", school);
+                    url = "/Admin/searchTeacher.jsp";
+
+                    break;
+
+                //Inable or able teacher after search
+                case "inactiveTeacherSearch":
+                    String teachID = request.getParameter("teacherID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    int teachersID = Integer.parseInt(teachID);
+                    TeacherDB.deactiveTeacher(teachersID, schoolID);
+
+                    response.sendRedirect("Private?action=searchTeacher&teacherName=" + teachID);
+                    return;
+
+                case "activeTeacherSearch":
+                    String teachIDs = request.getParameter("teacherID");
+
+                    schoolID = loggedInUser.getSchoolID();
+                    int teachersIDs = Integer.parseInt(teachIDs);
+                    TeacherDB.activeTeacher(teachersIDs, schoolID);
+
+                    response.sendRedirect("Private?action=searchTeacher&teacherName=" + teachIDs);
+                    return;
+
+                case "gotoLevels":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/levels.jsp";
+
+                    break;
+
+                case "gotoAddLevels":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    LinkedHashMap<String, Department> de = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
+
+                    request.setAttribute("department", de);
+
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/addLevels.jsp";
+
+                    break;
+
+                case "addLevels":
+                    schoolID = loggedInUser.getSchoolID();
+                    boolean isNice = true;
+                    String levelName = request.getParameter("levelName");
+                    String levelCode = request.getParameter("levelCode");
+                    String departmentId = request.getParameter("departmentID");
+
+                    int departmentid = Integer.parseInt(request.getParameter("departmentID"));
+                    int departmentID = 0;
+                    String status = "ACTIVE";
+
+                    if (levelName == null || levelName.trim().isEmpty()) {
+
+                        ERRORS.add("You must Enter LevelName.");
+                        isNice = false;
+
+                    } else if (levelName.length() >= 100) {
+
+                        ERRORS.add("Level Name must be less than 100 characters.");
+                        isNice = false;
+                    } else {
+
+                        levelName = levelName.trim();
+
+                    }
+
+                    if (levelCode.length() > 10) {
+
+                        ERRORS.add("Level Name must cannot be more than 10 characters.");
+                        isNice = false;
+                    } else {
+                        levelCode = levelCode.trim();
+
+                    }
+                    if (LevelDB.levelNameExists(levelName, departmentid)) {
+
+                        ERRORS.add("Level Name already exists.");
+                        isNice = false;
+                    }
+                    if (departmentId == null || departmentId.trim().isEmpty()) {
+
+                        ERRORS.add("Section cannot be empty.");
+                        isNice = false;
+
+                    } else {
+
+                        departmentID = Integer.parseInt(departmentId);
+
+                    }
+
+                    if (!isNice) {
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        LinkedHashMap<String, Department> depart = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
+
+                        request.setAttribute("department", depart);
+                        request.setAttribute("ERRORS", ERRORS);
+                        request.setAttribute("school", school);
+                        url = "/Admin/addLevels.jsp";
+                        break;
+                    }
+
+                    Levels level = new Levels();
+
+                    level.setLevelName(levelName);
+                    level.setLevelCode(levelCode);
+                    level.setStatus(status);
+                    level.setSchoolID(schoolID);
+                    level.setDepartmentID(departmentID);
+                    LevelDB.insertLevels(level);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    request.setAttribute("success", "Level added successfull!");
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/addLevels.jsp";
+
+                    break;
+
+                case "gotoLevelsList":
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    LinkedHashMap<String, Levels> levels = LevelDB.selectAllLevelByID(schoolID);
+
+                    request.setAttribute("levels", levels);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/levels.jsp";
+                    break;
+
+                case "gotoAddDepartment":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/addDepartment.jsp";
+
+                    break;
+
+                case "addDepartment":
+
+                    ArrayList<String> theResult = new ArrayList<>();
+                    schoolID = loggedInUser.getSchoolID();
+                    boolean isTrue = true;
+
+                    String departmentName = request.getParameter("departmentName");
+                    String theStatus = "ACTIVE";
+
+                    if (departmentName == null || departmentName.trim().isEmpty()) {
+
+                        theResult.add("Section cannot be empty. ");
+                        isTrue = false;
+                    } else if (departmentName.length() > 100) {
+
+                        theResult.add("Section cannot be more than 100 characters.");
+                        isTrue = false;
+                    } else if (DepartmentDB.departmentExists(departmentName)) {
+
+                        theResult.add("This Section already exist.");
+                        isTrue = false;
+                    } else {
+
+                        departmentName = departmentName.trim();
+                    }
+
+                    if (!isTrue) {
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+
+                        request.setAttribute("school", school);
+                        request.setAttribute("ERRORS", theResult);
+                        url = "/Admin/addDepartment.jsp";
+                        break;
+                    }
+
+                    Department d = new Department();
+
+                    d.setSchoolID(schoolID);
+
+                    d.setDepartmentName(departmentName);
+
+                    d.setStatus(theStatus);
+
+                    DepartmentDB.insertDepartment(d);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    request.setAttribute("success", "Section added successfull!");
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/addDepartment.jsp";
+                    break;
+
+                case "gotoDepartmentList":
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    LinkedHashMap<String, Department> dep = DepartmentDB.selectAllDepartmentByID(schoolID);
+
+                    request.setAttribute("department", dep);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/department.jsp";
+                    break;
 
                 default:
                     url = "/index.jsp";

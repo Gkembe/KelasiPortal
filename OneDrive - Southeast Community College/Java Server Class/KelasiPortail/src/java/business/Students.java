@@ -18,15 +18,16 @@ public class Students implements Serializable{
     private int schoolID, userID;
     private String registrationNumber, firstName, lastName, gender;
     private LocalDate dateOfBirth;
-    private String gradeLevel,department;
+   
     private LocalDate enrollmentDate;
     private String academicYear, phoneNumber, address, isActive;
     private LocalDateTime createdAT, updatedAT;
+    private int levelID; 
     
     
     public Students (){}
 
-    public Students(int schoolID, int userID, String registrationNumber, String firstName, String lastName, String gender, LocalDate dateOfBirth, String gradeLevel, String department, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT) {
+    public Students(int schoolID, int userID, String registrationNumber, String firstName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT, int levelID) {
         this.schoolID = schoolID;
         this.userID = userID;
         this.registrationNumber = registrationNumber;
@@ -34,8 +35,7 @@ public class Students implements Serializable{
         this.lastName = lastName;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
-        this.gradeLevel = gradeLevel;
-        this.department = department;
+       
         this.enrollmentDate = enrollmentDate;
         this.academicYear = academicYear;
         this.phoneNumber = phoneNumber;
@@ -45,14 +45,13 @@ public class Students implements Serializable{
         this.updatedAT = updatedAT;
     }
 
-    public Students(String registrationNumber, String firstName, String lastName, String gender, LocalDate dateOfBirth, String gradeLevel, String department, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT) {
+    public Students(String registrationNumber, String firstName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT) {
         this.registrationNumber = registrationNumber;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
-        this.gradeLevel = gradeLevel;
-        this.department = department;
+       
         this.enrollmentDate = enrollmentDate;
         this.academicYear = academicYear;
         this.phoneNumber = phoneNumber;
@@ -120,21 +119,7 @@ public class Students implements Serializable{
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getGradeLevel() {
-        return gradeLevel;
-    }
-
-    public void setGradeLevel(String gradeLevel) {
-        this.gradeLevel = gradeLevel;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
+    
 
     public LocalDate getEnrollmentDate() {
         return enrollmentDate;
@@ -218,6 +203,14 @@ public class Students implements Serializable{
 
     public void setUpdatedAT(LocalDateTime updatedAT) {
         this.updatedAT = updatedAT;
+    }
+
+    public int getLevelID() {
+        return levelID;
+    }
+
+    public void setLevelID(int levelID) {
+        this.levelID = levelID;
     }
 
     

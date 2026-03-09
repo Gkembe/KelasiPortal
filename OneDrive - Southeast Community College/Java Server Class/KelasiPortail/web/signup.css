@@ -189,6 +189,30 @@ main {
     text-decoration: underline;
 }
 
+.checkB{
+    
+  
+    
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.borde {
+    
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    
+}
+
+.lab {
+    
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+
 /* RESPONSIVE */
 @media (max-width: 920px) {
     .topbar {

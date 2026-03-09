@@ -5,8 +5,13 @@
 package controllers;
 
 import business.School;
+import business.SchoolCycle;
 import business.User;
-import database.KelasiDB;
+import java.sql.Connection;
+import database.ConnectionPool;
+import database.SchoolCycleDB;
+import database.UserDB;
+import database.SchoolDB;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -111,7 +116,7 @@ public class Public extends HttpServlet {
 
                     }
 
-                    User loggedInUser = KelasiDB.selectUserByEmail(email);
+                    User loggedInUser = UserDB.selectUserByEmail(email);
 
                     if (loggedInUser == null) {
 
@@ -182,14 +187,17 @@ public class Public extends HttpServlet {
                     String shortName = request.getParameter("shortname");
                     String registrationNumber = request.getParameter("registrationNumber");
                     String schoolType = request.getParameter("schooltype");
-                    String schoolLevel = request.getParameter("schoollevel");
+
                     String country = request.getParameter("country");
                     String schoolCity = request.getParameter("schoolcity");
                     String schoolAddress = request.getParameter("schooladdress");
                     String website = request.getParameter("website");
                     String schoolEmail = request.getParameter("schoolemail");
                     Part logoPart = request.getPart("schoollogo");
-                    
+
+                    //READ CYCLE 
+                    String[] schoolCycle = request.getParameterValues("schoolCycle");
+                    String status = "ACTIVE";
 
                     // READ USER ADMIN
                     String username = request.getParameter("username");
@@ -235,7 +243,7 @@ public class Public extends HttpServlet {
                         isValid = false;
                     } else {
                         username = username.trim();
-                        if (KelasiDB.usernameExists(username)) {
+                        if (UserDB.usernameExists(username)) {
                             errors.add("Username already exists.");
                             isValid = false;
                         }
@@ -246,7 +254,7 @@ public class Public extends HttpServlet {
                         isValid = false;
                     } else {
                         adminEmail = adminEmail.trim();
-                        if (KelasiDB.adminEmailExists(adminEmail)) {
+                        if (UserDB.adminEmailExists(adminEmail)) {
                             errors.add("Admin email already exists.");
                             isValid = false;
                         }
@@ -330,7 +338,7 @@ public class Public extends HttpServlet {
                     school.setShortName(shortName);
                     school.setRegistrationNumber(registrationNumber);
                     school.setSchoolType(schoolType);
-                    school.setSchoolLevel(schoolLevel);
+
                     school.setCountry(country);
                     school.setSchoolCity(schoolCity);
                     school.setSchoolAddress(schoolAddress);
@@ -375,23 +383,60 @@ public class Public extends HttpServlet {
                     User user = new User(username, hash, role, adminEmail, adminPhone, 0, isAc);
 
                     //DB (transaction)
+                    ConnectionPool pool = ConnectionPool.getInstance();
+                    Connection conn = pool.getConnection();
+
                     try {
-                        boolean ok = KelasiDB.registerSchoolAndAdmin(school, user);
+                        conn.setAutoCommit(false);
 
-                        if (ok) {
-                            request.setAttribute("message", "Registration successful. Please log in.");
-                            url = "/index.jsp";
-                        } else {
-
-                            errors.add("Registration failed.");
-                            request.setAttribute("errors", errors);
-                            url = "/signup.jsp";
+                        // 1) insert school
+                        int schoolID = SchoolDB.insertSchool(conn, school);
+                        if (schoolID <= 0) {
+                            throw new SQLException("School insert failed");
                         }
 
-                    } catch (SQLException | NamingException ex) {
-                        ex.printStackTrace();
-                    }
+                        // 2) set FK in user, then insert user
+                        user.setSchoolID(schoolID);
+                        int userID = UserDB.insertUser(conn, user);
+                        if (userID <= 0) {
+                            throw new SQLException("User insert failed");
+                        }
 
+                        // 3) insert cycles (checkbox)
+                        
+                        if (schoolCycle != null) {
+
+                            for (int i = 0; i < schoolCycle.length; i++) {
+
+                                SchoolCycle cycle = new SchoolCycle();
+                                cycle.setSchoolID(schoolID);            // ✅ FK
+                                cycle.setCycleName(schoolCycle[i]);     // NURSERY/PRIMARY/SECONDARY
+                                cycle.setStatus("Active");
+
+                                int cycleID = SchoolCycleDB.insertSchoolCycle(conn, cycle);
+                                if (cycleID <= 0) {
+                                    throw new SQLException("SchoolCycle insert failed");
+                                }
+                            }
+                        }
+
+                        conn.commit();
+
+                        request.setAttribute("message", "Registration successful. Please log in.");
+                        url = "/index.jsp";
+
+                    } catch (Exception ex) {
+                        conn.rollback();
+                        ex.printStackTrace();
+
+                        errors.add("Registration failed.");
+                        request.setAttribute("errors", errors);
+                        url = "/signup.jsp";
+
+                    } finally {
+                        conn.setAutoCommit(true);
+                        conn.close(); // ou pool.freeConnection(conn) selon ton ConnectionPool
+                    }
                     break;
                 }
 

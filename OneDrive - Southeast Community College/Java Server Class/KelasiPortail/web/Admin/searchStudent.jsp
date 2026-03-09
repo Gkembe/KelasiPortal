@@ -17,10 +17,10 @@
     </head>
     <body>
 
-        
+
         <div class="layout">
 
-           
+
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -32,18 +32,19 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-           
+
             <div class="content">
 
                 <div class="topbar">
                     <div>
                         <h1><i class="fa-solid fa-user-graduate"></i> Students</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
-                        
+
                         <div class="searchDiv">
                             <form class="forms" action="Private" method="post">
 
@@ -61,7 +62,7 @@
 
                     <br>
                 </div>
-                     <div class="section">
+                <div class="section">
                     <div class="section-header">
                         <h2>Student Found</h2>
                         <a class="btn" href="${pageContext.request.contextPath}/Private?action=listStudents">Cancel</a>
@@ -77,8 +78,7 @@
                                     <th>Last Name</th>
                                     <th>Gender</th>
                                     <th>Birth Date</th>
-                                    <th>Grade Level</th>
-                                    <th>Department</th>
+                                   
                                     <th>Enrollment Date</th>
                                     <th>Academic Year</th>
                                     <th>Phone Number</th>
@@ -100,7 +100,7 @@
 
 
                                         <tr>
-                                            <td colspan="16" class="empty">No student found.</td>
+                                            <td colspan="14" class="empty">No student found.</td>
                                         </tr>
 
                                     </c:when>
@@ -112,8 +112,8 @@
                                                 <td>${s.lastName}</td>
                                                 <td>${s.gender}</td>
                                                 <td>${s.dateOfBirth}</td>
-                                                <td>${s.gradeLevel}</td>
-                                                <td>${s.department}</td>
+                                              
+                                                
                                                 <td>${s.enrollmentDate}</td>
                                                 <td>${s.academicYear}</td>
                                                 <td>${s.phoneNumber}</td>

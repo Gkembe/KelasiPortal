@@ -30,7 +30,8 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
@@ -49,24 +50,26 @@
                         <h2>Student Information</h2>
                     </div>
                     <ul style="color: red">
-                        
+
                         <c:forEach var="b" items="${badMessage}">
-                            
-                            
+
+
                             <li>${b}</li>
-                        </c:forEach>
-                        
-                        
+                            </c:forEach>
+
+
                     </ul>
-                    
-                    
-                    
+
+
+
                     <p>${message}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
                         <input type="hidden" name="action" value="addStudent">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
                         <input type="hidden" name="userID" value="${user.userID}">
+                        <input type="hidden" name="departmentID" value="${departmentID}">
+                        <p>code: ${departmentID}</p>
 
                         <div class="form-grid">
                             <div class="form-row">
@@ -82,7 +85,7 @@
                                 <label class="form-label">Last Name</label>
                                 <input class="form-input" type="text" name="lastName" placeholder="Doe" >
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Gender</label>
                                 <select class="form-input" name="gender" required>
@@ -91,12 +94,12 @@
                                     <option value="OTHER">OTHER</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Birth Date</label>
                                 <input class="form-input" type="date" name="birthDate">
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Grade Level</label>
                                 <select class="form-input" name="gradeLevel" required>
@@ -107,33 +110,43 @@
                                     <option value="Senior">Senior</option>
                                 </select>
                             </div>
-                            
+
+
                             <div class="form-row">
-                                <label class="form-label">Department</label>
-                                <input class="form-input" type="text" name="department" placeholder="Cybersecurity">
+                                <select name="levelID" required>
+                                    <option value="">-- Select Level --</option>
+
+
+                                    <c:forEach var="l" items="${levels.values()}">
+                                        <option value="${l.levelID}">${l.levelName}</option>
+                                    </c:forEach>
+
+                                </select>
+
+
+
                             </div>
-                            
                             <div class="form-row">
                                 <label class="form-label">Enrollment Date</label>
                                 <input class="form-input" type="date" name="enrollmentDate">
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Academic Year</label>
                                 <input class="form-input" type="text" name="academicYear" placeholder="2020-2021">
                             </div>
-                            
-                            
+
+
                             <div class="form-row">
                                 <label class="form-label">Phone Number</label>
                                 <input class="form-input" type="text" name="phoneNumber" placeholder="+14024307272">
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Address</label>
                                 <input class="form-input" type="text" name="address" placeholder="7830 D Street Apt 3">
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Status</label>
                                 <select class="form-input" name="isActive" required>
@@ -141,7 +154,7 @@
                                     <option value="INACTIVE">INACTIVE</option>
                                 </select>
                             </div>
-                                                     
+
                             <div class="form-row">
                                 <label for="username">Username ADMIN</label>
                                 <input type="text" class="form-input" name="username" placeholder="Andree"  />
@@ -158,16 +171,16 @@
                                 <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
                             </div>
 
-                            
-                                <div class="form-row">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                                </div>
-                                <div class="form-row">
-                                    <label for="confirm" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                                </div>
-                            
+
+                            <div class="form-row">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
+                            </div>
+                            <div class="form-row">
+                                <label for="confirm" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
+                            </div>
+
                         </div>
 
                         <div class="actions">

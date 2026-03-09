@@ -1,8 +1,9 @@
 <%-- 
-    Document   : allTeachers
-    Created on : Dec 20, 2025, 1:56:48 PM
+    Document   : Department
+    Created on : Feb 19, 2026, 9:15:37 PM
     Author     : kembe
 --%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -11,12 +12,14 @@
         <meta charset="UTF-8">
         <title>Kelasi - Users</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/teacherButton.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     </head>
     <body>
+
+
+
         <div class="layout">
 
 
@@ -37,20 +40,18 @@
             </div>
 
 
-
-
             <div class="content">
 
                 <div class="topbar">
                     <div>
-                        <h1><i class="fa-solid fa-chalkboard-teacher"></i> Teachers</h1>
+                        <h1><i class="fa-solid fa-arrow-up-wide-short"></i> Section</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                         <div class="searchDiv">
                             <form class="forms" action="Private" method="post">
 
-                                <input type="hidden" name="action" value="searchTeacher">
+                                <input type="hidden" name="action" value="searchDepartment">
 
-                                <input class="search" type="search" name="teacherName" placeholder="Search...">
+                                <input class="search" type="search" name="departmentID" placeholder="Search...">
 
                                 <input type="submit" value="search ID">
 
@@ -62,10 +63,16 @@
 
                     <br>
                 </div>
+
+
+
+
+
+                <!-- Original -->
                 <div class="section">
                     <div class="section-header">
-                        <h2>Teachers List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
+                        <h2>Section List</h2>
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddDepartment">+ Add Section</a>
                     </div>
 
 
@@ -73,15 +80,12 @@
                         <table class="table" id="tab">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Subject</th>
-                                    <th>Qualification</th>
-                                    <th>Phone Number</th>
-                                    <th>Office Location</th>
+                                    <th>Section Name</th>
+                                    
+                                    
                                     <th>Status</th>
-                                    <th>Hire Date</th>
-                                    <th>Created Date</th>
+                                    <th>Created AT</th>
+                                    
                                     <th>Inactive</th>
                                     <th>Active</th>
 
@@ -92,42 +96,32 @@
                             <tbody>
                                 <c:choose> 
 
-                                    <c:when test="${empty teachers}">
+                                    <c:when test="${empty department}">
 
 
                                         <tr>
-                                            <td colspan="9" class="empty">No teacher found.</td>
+                                            <td colspan="3" class="empty">No level found.</td>
                                         </tr>
 
                                     </c:when>
                                     <c:otherwise>
-                                        <c:forEach var="t" items="${teachers.values()}">
+                                        <c:forEach var="d" items="${department.values()}">
                                             <tr>
-                                                <td>${t.firstName}</td>
-                                                <td>${t.lastName}</td>
-                                                <td>${t.subject}</td>
-                                                <td>${t.qualification}</td>
-                                                <td>${t.phoneNumber}</td>
-                                                <td>${t.officeLocation}</td>
-                                                <td>${t.isActive}</td>
-                                                <td>${t.hireDate}</td>
-
-                                                <td>${t.getFormattedTime()}</td>
-                                                <td>
-                                                    <a class="status-btn disabled"
-                                                       href="${pageContext.request.contextPath}/Private?action=inactiveTeacher&teacherID=${t.teacherID}"
-                                                       onclick="return confirm('Are you sure you want to deactivate this Teacher?')">
-                                                        DISABLE
-                                                    </a>
-                                                </td>
-
-                                                <td>
-                                                    <a class="status-btn activate"
-                                                       href="${pageContext.request.contextPath}/Private?action=activeTeacher&teacherID=${t.teacherID}"
-                                                       onclick="return confirm('Are you sure you want to activate this Teacher?')">
-                                                        ACTIVATE
-                                                    </a>
-                                                </td>
+                                                
+                                                <td>${d.departmentName}</td>
+                                                
+                                                
+                                                <td>${d.status}</td>
+                                                <td>${d.getFormattedTime()}</td>
+                                                
+                                                <td><a class="status-btn disabled" 
+                                                       href="${pageContext.request.contextPath}/Private?action=inactiveSection&departmentID=${d.departmentID}"
+                                                       onclick="return confirm('Are you sure you want to deactive this Section?')"
+                                                       >DISABLE</a></td>
+                                                <td><a class="status-btn activate"
+                                                       href="${pageContext.request.contextPath}/Private?action=activeDepartment&departmentID=${d.departmentID}"
+                                                       onclick="return confirm('Are you sure you want to active this Section?')"
+                                                       >ACTIVATE</a></td>
 
 
 
@@ -145,10 +139,3 @@
 
     </body>
 </html>
-
-
-
-
-
-
-

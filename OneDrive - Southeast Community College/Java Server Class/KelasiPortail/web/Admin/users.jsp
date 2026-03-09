@@ -45,11 +45,13 @@
             .status-btn.activate:hover{
                 background:#3b82f6;
             }
-            .mes {color: red;}
+            .mes {
+                color: red;
+            }
         </style>
         <div class="layout">
 
-          
+
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -61,11 +63,12 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-           
+
             <div class="content">
 
                 <div class="topbar">

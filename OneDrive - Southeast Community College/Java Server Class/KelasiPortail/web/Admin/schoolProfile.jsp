@@ -21,7 +21,7 @@
 
         <div class="layout">
 
-          
+
             <div class="sidebar">
 
                 <div class="brand">
@@ -35,14 +35,15 @@
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
-           
+
             <div class="content">
 
-                
+
                 <div class="topbar">
                     <div>
                         <h1>Profile</h1>
@@ -65,11 +66,11 @@
                     </div>
                 </div>
 
-       
+
                 <div class="cards">
 
 
-                 
+
                     <div class="section">
                         <div class="section-header">
                             <h2>School Information</h2>
@@ -87,7 +88,7 @@
                             <div class="info-item"><span>Website:</span> ${school.website}</div>
                             <div class="info-item"><span>Registration Number:</span> ${school.registrationNumber}</div>
                             <div class="info-item"><span>School Type:</span> ${school.schoolType}</div>
-                            <div class="info-item"><span>School Level:</span> ${school.schoolLevel}</div>
+                            <div class="info-item"><span>School Cycle:</span> <c:forEach var="c" items="${cycles.values()}" varStatus="s"> ${c.cycleName} <c:if test="${!s.last}">,</c:if> </c:forEach></div>
                             <div class="info-item"><span>Creation Date:</span> ${school.getFormattedTime()}</div>
                             <div class="info-item">
                                 <span>Status:</span>
@@ -105,7 +106,7 @@
                         </div>
                     </div>
 
-                    
+
                     <div class="section">
                         <h2>Quick Actions</h2>
                         <div class="actions">

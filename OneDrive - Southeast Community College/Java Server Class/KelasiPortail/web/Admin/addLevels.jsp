@@ -1,6 +1,6 @@
 <%-- 
-    Document   : addUsers
-    Created on : Dec 30, 2025, 9:26:56 PM
+    Document   : addLevels
+    Created on : Jan 25, 2026, 5:30:28 PM
     Author     : kembe
 --%>
 
@@ -41,57 +41,59 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Add Student</h1>
-                        <div class="subtext">Fill student information</div>
+                        <h1>Add School Level</h1>
+                        <div class="subtext">Fill Level information</div>
                     </div>
                 </div>
 
                 <div class="section">
                     <div class="section-header">
-                        <h2>Student Information</h2>
+                        <h2>Level Information</h2>
                     </div>
                     <ul style="color: red">
 
-                        <c:forEach var="b" items="${badMessage}">
+                        <c:forEach var="e" items="${ERRORS}">
 
 
-                            <li>${b}</li>
+                            <li>${e}</li>
                             </c:forEach>
 
                     </ul>
-                    <p style="color: green">${message}</p>
+                    <p style="color: green">${success}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
-                        <input type="hidden" name="action" value="addUsers">
+                        <input type="hidden" name="action" value="addLevels">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
-                        <input type="hidden" name="userID" value="${user.userID}">
+                        
 
                         <div class="form-grid">
 
                             <div class="form-row">
-                                <label for="username">Username ADMIN</label>
-                                <input type="text" class="form-input" name="username" placeholder="Andree"  />
+                                <label for="levelName">Level Name</label>
+                                <input type="text" class="form-input" name="levelName" placeholder="Troisieme"  />
                             </div>
                             <div class="form-row">
-                                <label for="adminemail">Email ADMIN</label>
-                                <input type="email" class="form-input" name="adminemail" placeholder="admin@school.com" />
+                                <label for="levelCode">Level Code</label>
+                                <input type="text" class="form-input" name="levelCode" placeholder="3th" />
+                            </div>
+                            
+                            <div class="form-row">
+                                <label for="levelCode">Section </label>
+                                <select class="form-input" name="departmentID" required>
+                                    <option value="">--Select Section--</option>
+                                    <c:forEach var="d" items="${department.values()}">
+                                        
+
+                                        <option value="${d.departmentID}">${d.departmentName}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
-                            <div class="form-row">
-                                <label for="adminphone" class="form-label">Phone ADMIN</label>
-                                <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
-                            </div>
-                            <div class="form-row">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                            </div>
-                            <div class="form-row">
-                                <label for="confirm" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                            </div>
+                           
+                            
                         </div>
                         <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Add ADMIN">
+                            <input class="btn btn-primary" type="submit" value="Add Level">
                             <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Cancel</a>
                         </div>
                     </form>
@@ -103,3 +105,4 @@
 
     </body>
 </html>
+

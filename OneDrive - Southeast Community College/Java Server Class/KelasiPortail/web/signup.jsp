@@ -65,17 +65,18 @@
                             <option value="OTHER">Other</option>
                         </select> 
                     </div>
-                    <div class="input-group">
-                        <label for="schoolLevel">School Level</label>
-                        <select id="schoolLevel" name="schoollevel" >
-                            <option value="">-- Select level --</option>
-                            <option value="PRIMARY">Primary School</option>
-                            <option value="MIDDLE">Middle School</option>
-                            <option value="HIGH">High School</option>
-                            <option value="COLLEGE">College</option>
-                            <option value="UNIVERSITY">University</option>
-                        </select>
+                    
+                    <div>
+                        <label class="lab">School Cycle</label>
+                        
+                    <div class="borde">
+                       
+                    
+                        <input type="checkbox" class="checkB" name="schoolCycle" value="NURSERY"><label >Nursery School</label>      <br>
+                        <input type="checkbox" class="checkB" name="schoolCycle" value="PRIMARY"><label >Primary School</label>      <br>
+                        <input type="checkbox" class="checkB" name="schoolCycle" value="SECONDARY"><label >Secondary School</label>
 
+                    </div>
                     </div>
                     <div class="input-group">
                         <label for="coutry">Country</label>

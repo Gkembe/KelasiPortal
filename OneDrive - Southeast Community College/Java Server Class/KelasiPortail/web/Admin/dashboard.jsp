@@ -36,6 +36,8 @@
         <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
         <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
         <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
+        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
 
         <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
     </div>
@@ -73,6 +75,11 @@
             <div class="card">
                 <div class="card-title">Users</div>
                 <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalUsers}</div>
+                <div class="card-note">Total accounts</div>
+            </div>
+                <div class="card">
+                <div class="card-title">Administrators</div>
+                <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalAdmin}</div>
                 <div class="card-note">Total accounts</div>
             </div>
 
@@ -128,7 +135,9 @@
             <div class="actions">
                 <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
                 <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddStudent">+ Add Student</a>
+                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoChooseSection">+ Add Student</a>
+                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddLevels">+ Add Level</a>
+                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddDepartment">+ Add Section</a>
             </div>
         </div>
 

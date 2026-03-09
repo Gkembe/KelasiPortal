@@ -19,7 +19,7 @@
 
 
         <div class="layout">
-            
+
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -31,7 +31,8 @@
                 <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
 
@@ -50,18 +51,18 @@
                         <h2>Teacher Information</h2>
                     </div>
                     <ul style="color: red">
-                        
+
                         <c:forEach var="me" items="${errors}">
-                            
-                            
+
+
                             <li>${me}</li>
-                        </c:forEach>
-                        
-                        
+                            </c:forEach>
+
+
                     </ul>
-                    
+
                     <p>${erros}</p>
-                    
+
                     <p>${message}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
@@ -94,7 +95,7 @@
                                 <label class="form-label">Specialty</label>
                                 <input class="form-input" type="text" name="specification" placeholder="Mathematics / Computer Science">
                             </div>
-                            
+
                             <div class="form-row">
                                 <label class="form-label">Qualification</label>
                                 <input class="form-input" type="text" name="qualification" placeholder="BS Computer Sceience">
@@ -128,16 +129,16 @@
                                 <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
                             </div>
 
-                            
-                                <div class="form-row">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                                </div>
-                                <div class="form-row">
-                                    <label for="confirm" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                                </div>
-                            
+
+                            <div class="form-row">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
+                            </div>
+                            <div class="form-row">
+                                <label for="confirm" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
+                            </div>
+
                         </div>
 
                         <div class="actions">

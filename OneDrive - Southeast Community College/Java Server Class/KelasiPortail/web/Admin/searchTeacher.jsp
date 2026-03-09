@@ -1,4 +1,10 @@
 <%-- 
+    Document   : searchTeacher
+    Created on : Jan 24, 2026, 4:38:01 PM
+    Author     : kembe
+--%>
+
+<%-- 
     Document   : allTeachers
     Created on : Dec 20, 2025, 1:56:48 PM
     Author     : kembe
@@ -64,8 +70,8 @@
                 </div>
                 <div class="section">
                     <div class="section-header">
-                        <h2>Teachers List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
+                        <h2>Teachers Found</h2>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=listTeachers">Cancel</a>
                     </div>
 
 
@@ -92,16 +98,16 @@
                             <tbody>
                                 <c:choose> 
 
-                                    <c:when test="${empty teachers}">
+                                    <c:when test="${empty getTeacher}">
 
 
                                         <tr>
-                                            <td colspan="9" class="empty">No teacher found.</td>
+                                            <td colspan="11" class="empty">No teacher found.</td>
                                         </tr>
 
                                     </c:when>
                                     <c:otherwise>
-                                        <c:forEach var="t" items="${teachers.values()}">
+                                        <c:forEach var="t" items="${getTeacher.values()}">
                                             <tr>
                                                 <td>${t.firstName}</td>
                                                 <td>${t.lastName}</td>
@@ -115,7 +121,7 @@
                                                 <td>${t.getFormattedTime()}</td>
                                                 <td>
                                                     <a class="status-btn disabled"
-                                                       href="${pageContext.request.contextPath}/Private?action=inactiveTeacher&teacherID=${t.teacherID}"
+                                                       href="${pageContext.request.contextPath}/Private?action=inactiveTeacherSearch&teacherID=${t.teacherID}"
                                                        onclick="return confirm('Are you sure you want to deactivate this Teacher?')">
                                                         DISABLE
                                                     </a>
@@ -123,7 +129,7 @@
 
                                                 <td>
                                                     <a class="status-btn activate"
-                                                       href="${pageContext.request.contextPath}/Private?action=activeTeacher&teacherID=${t.teacherID}"
+                                                       href="${pageContext.request.contextPath}/Private?action=activeTeacherSearch&teacherID=${t.teacherID}"
                                                        onclick="return confirm('Are you sure you want to activate this Teacher?')">
                                                         ACTIVATE
                                                     </a>
