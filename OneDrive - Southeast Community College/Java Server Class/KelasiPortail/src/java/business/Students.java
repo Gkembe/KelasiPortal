@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class Students implements Serializable{
     
     private int schoolID, userID;
-    private String registrationNumber, firstName, lastName, gender;
+    private String registrationNumber, firstName, middleName, lastName, gender;
     private LocalDate dateOfBirth;
    
     private LocalDate enrollmentDate;
@@ -24,14 +24,17 @@ public class Students implements Serializable{
     private LocalDateTime createdAT, updatedAT;
     private int levelID; 
     
+    private String levelName, levelCode, departmentName;
+    
     
     public Students (){}
 
-    public Students(int schoolID, int userID, String registrationNumber, String firstName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT, int levelID) {
+    public Students(int schoolID, int userID, String registrationNumber, String firstName, String middleName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT, int levelID) {
         this.schoolID = schoolID;
         this.userID = userID;
         this.registrationNumber = registrationNumber;
         this.firstName = firstName;
+        this.middleName = middleName;
         this.lastName = lastName;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
@@ -93,6 +96,14 @@ public class Students implements Serializable{
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public String getLastName() {
@@ -211,6 +222,30 @@ public class Students implements Serializable{
 
     public void setLevelID(int levelID) {
         this.levelID = levelID;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public String getLevelCode() {
+        return levelCode;
+    }
+
+    public void setLevelCode(String lavelCode) {
+        this.levelCode = lavelCode;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     

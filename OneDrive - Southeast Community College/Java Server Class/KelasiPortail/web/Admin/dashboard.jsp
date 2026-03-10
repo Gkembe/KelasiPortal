@@ -1,7 +1,7 @@
- <%-- 
-    Document   : dashboard
-    Created on : Dec 17, 2025, 10:24:51 AM
-    Author     : kembe
+<%-- 
+   Document   : dashboard
+   Created on : Dec 17, 2025, 10:24:51 AM
+   Author     : kembe
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -10,139 +10,141 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <meta charset="UTF-8">
-    <title>Kelasi - Admin Dashboard</title>
+        <meta charset="UTF-8">
+        <title>Kelasi - Admin Dashboard</title>
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-<div class="layout">
+        <div class="layout">
 
- 
-    <div class="sidebar">
 
-        <div class="brand">
-            
-            <div class="brand-title">KELASI</div>
-            <div class="brand-sub">${school.shortName}</div>
-        </div>
+            <div class="sidebar">
 
-        <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
-        <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
+                <div class="brand">
 
-        <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
-    </div>
+                    <div class="brand-title">KELASI</div>
+                    <div class="brand-sub">${school.shortName}
+                    </div>
 
-    
-    <div class="content">
-
-      
-        <div class="topbar">
-            <div>
-                <h1>Dashboard</h1>
-                <div class="subtext">
-                    Welcome <b>${loggedInUser.userName}</b> (Role: 👤<b>${loggedInUser.role}</b>)
-                </div>
-            </div>
-
-            <div class="school-mini">
-                <c:choose>
-                    <c:when test="${not empty school.schoolLogo}">
-                        <img class="logo" src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
-                    </c:when>
-                    
-                </c:choose>
-            </div>
-        </div>
-
-        
-        <div class="cards">
-            <div class="card">
-                <div class="card-title">School</div>
-                <div class="card-value"><i class="fa-solid fa-school"></i> ${school.shortName}</div>
-                <div class="card-note">${school.schoolName}</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Users</div>
-                <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalUsers}</div>
-                <div class="card-note">Total accounts</div>
-            </div>
-                <div class="card">
-                <div class="card-title">Administrators</div>
-                <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalAdmin}</div>
-                <div class="card-note">Total accounts</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Students</div>
-                
-                <div class="card-value"><i class="fa-solid fa-user-graduate"></i> ${requestScope.totalStudents}</div>
-                <div class="card-note">Registered students</div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Teachers</div>
-                <div class="card-value"><i class="fa-solid fa-chalkboard-teacher"></i> ${requestScope.totalTeachers}</div>
-                <div class="card-note">Active teachers</div>
-            </div>
-        </div>
-
-        
-        <div class="section">
-            <div class="section-header">
-                <h2>School Information</h2>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">Edit</a>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-item"><span>Name:</span> ${school.schoolName}</div>
-                <div class="info-item"><span>Short Name:</span> ${school.shortName}</div>
-               
-                <div class="info-item"><span>📧 Email:</span> ${school.schoolEmail}</div>
-                <div class="info-item"><span>Country:</span> ${school.country}</div>
-                <div class="info-item"><span> 📍 City:</span> ${school.schoolCity}</div>
-                <div class="info-item"><span>Website:</span> ${school.website}</div>
-
-               <div class="info-item">
-                    <span>Status:</span>
                     <c:choose>
-                        <c:when test="${school.active}">
-                            <span class="badge active">ACTIVE</span>
+                        <c:when test="${not empty school.schoolLogo}">
+                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
                         </c:when>
-                        <c:otherwise>
-                            <span class="badge inactive">INACTIVE</span>
-                        </c:otherwise>
+
                     </c:choose>
                 </div>
 
-                <div class="info-item"><span>SchoolID:</span> ${school.schoolID}</div>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
+
+                <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
             </div>
-        </div>
-            
-       
-        <div class="section">
-            <h2>Quick Actions</h2>
-            <div class="actions">
-                <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoChooseSection">+ Add Student</a>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddLevels">+ Add Level</a>
-                <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddDepartment">+ Add Section</a>
+
+
+            <div class="content">
+
+
+                <div class="topbar">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <div class="subtext">
+                            Welcome <b>${loggedInUser.userName}</b> (Role: 👤<b>${loggedInUser.role}</b>)
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-title">School</div>
+                        <div class="card-value"><i class="fa-solid fa-school"></i> ${school.shortName}</div>
+                        <div class="card-note">${school.schoolName}</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Users</div>
+                        <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalUsers}</div>
+                        <div class="card-note">Total accounts</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Administrators</div>
+                        <div class="card-value"><i class="fa-solid fa-user"></i> ${requestScope.totalAdmin}</div>
+                        <div class="card-note">Total accounts</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Students</div>
+
+                        <div class="card-value"><i class="fa-solid fa-user-graduate"></i> ${requestScope.totalStudents}</div>
+                        <div class="card-note">Registered students</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Teachers</div>
+                        <div class="card-value"><i class="fa-solid fa-chalkboard-teacher"></i> ${requestScope.totalTeachers}</div>
+                        <div class="card-note">Active teachers</div>
+                    </div>
+                </div>
+
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>School Information</h2>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">Edit</a>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item"><span>Name:</span> ${school.schoolName}</div>
+                        <div class="info-item"><span>Short Name:</span> ${school.shortName}</div>
+
+                        <div class="info-item"><span>📧 Email:</span> ${school.schoolEmail}</div>
+                        <div class="info-item"><span>Country:</span> ${school.country}</div>
+                        <div class="info-item"><span> 📍 City:</span> ${school.schoolCity}</div>
+                        <div class="info-item"><span>Website:</span> ${school.website}</div>
+
+                        <div class="info-item">
+                            <span>Status:</span>
+                            <c:choose>
+                                <c:when test="${school.active}">
+                                    <span class="badge active">ACTIVE</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="badge inactive">INACTIVE</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+
+                        <div class="info-item"><span>SchoolID:</span> ${school.schoolID}</div>
+                    </div>
+                </div>
+
+
+                <div class="section">
+                    <h2>Quick Actions</h2>
+                    <div class="actions">
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddTeacher">+ Add Teacher</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoChooseSection">+ Add Student</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddLevels">+ Add Level</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoAddDepartment">+ Add Section</a>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-    </div>
-</div>
-
-</body>
+    </body>
 </html>

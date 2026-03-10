@@ -20,11 +20,17 @@
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
                     <div class="brand-sub">${school.shortName}</div>
+                    <c:choose>
+                        <c:when test="${not empty school.schoolLogo}">
+                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
+                        </c:when>
+
+                    </c:choose>
                 </div>
 
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>

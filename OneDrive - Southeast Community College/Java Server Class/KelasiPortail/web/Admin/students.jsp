@@ -26,11 +26,17 @@
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
                     <div class="brand-sub">${school.shortName}</div>
+                    <c:choose>
+                        <c:when test="${not empty school.schoolLogo}">
+                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
+                        </c:when>
+
+                    </c:choose>
                 </div>
 
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
@@ -76,24 +82,21 @@
 
 
                     <div class="table-wraper">
-                        <table class="table" id="tab">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Student ID</th>
                                     <th>First Name</th>
+                                    <th>Middle Name</th>
                                     <th>Last Name</th>
-                                    <th>Gender</th>
-                                    <th>Birth Date</th>
-
-                                    <th>Enrollment Date</th>
-                                    <th>Academic Year</th>
-                                    <th>Phone Number</th>
-                                    <th>Address</th>
+                                    
+                                    
+                                    
                                     <th>Status</th>
-                                    <th>Created AT</th>
-                                    <th>Updated AT</th>
+                                    
                                     <th>Inactive</th>
                                     <th>Active</th>
+                                    <th>Profile</th>
 
 
                                 </tr>
@@ -106,7 +109,7 @@
 
 
                                         <tr>
-                                            <td colspan="11" class="empty">No student found.</td>
+                                            <td colspan="8" class="empty">No student found.</td>
                                         </tr>
 
                                     </c:when>
@@ -115,17 +118,15 @@
                                             <tr>
                                                 <td>${s.registrationNumber}</td>
                                                 <td>${s.firstName}</td>
+                                                <td>${s.middleName}</td>
                                                 <td>${s.lastName}</td>
-                                                <td>${s.gender}</td>
-                                                <td>${s.dateOfBirth}</td>
+                                                
 
-                                                <td>${s.enrollmentDate}</td>
-                                                <td>${s.academicYear}</td>
-                                                <td>${s.phoneNumber}</td>
-                                                <td>${s.address}</td>
+                                                
+                                               
+                                                
                                                 <td>${s.isActive}</td>
-                                                <td>${s.getCreatedFormattedTime()}</td>
-                                                <td>${s.getUpdatedFormattedTime()}</td>
+                                                
                                                 <td><a class="status-btn disabled" 
                                                        href="${pageContext.request.contextPath}/Private?action=inactiveStudent&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to deactive this student?')"
@@ -134,6 +135,11 @@
                                                        href="${pageContext.request.contextPath}/Private?action=activeStudent&registrationNumber=${s.registrationNumber}"
                                                        onclick="return confirm('Are you sure you want to active this student?')"
                                                        >ACTIVATE</a></td>
+
+                                                <td><a class="status-btn activate"
+                                                       href="${pageContext.request.contextPath}/Private?action=studentProfile&registrationNumber=${s.registrationNumber}"
+
+                                                       >Profile</a></td>
 
 
 

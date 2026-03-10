@@ -13,7 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import javax.naming.NamingException;
 
 /**
@@ -60,9 +62,9 @@ public class StudentDB {
         ResultSet rs = null;
 
         String query
-                = "INSERT INTO students (schoolID, userID, registrationNumber, firstName, lastName,"
+                = "INSERT INTO students (schoolID, userID, registrationNumber, firstName, middleName, lastName,"
                 + " gender, dateOfBirth, enrollmentDate, academicYear, phone, address, isActive, levelID) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
@@ -71,16 +73,17 @@ public class StudentDB {
 
         ps.setString(3, student.getRegistrationNumber());
         ps.setString(4, student.getFirstName());
-        ps.setString(5, student.getLastName());
-        ps.setString(6, student.getGender());
-        ps.setDate(7, Date.valueOf(student.getDateOfBirth()));
+        ps.setString(5, student.getMiddleName());
+        ps.setString(6, student.getLastName());
+        ps.setString(7, student.getGender());
+        ps.setDate(8, Date.valueOf(student.getDateOfBirth()));
         
-        ps.setDate(8, Date.valueOf(student.getEnrollmentDate()));
-        ps.setString(9, student.getAcademicYear());
-        ps.setString(10, student.getPhoneNumber());
-        ps.setString(11, student.getAddress());
-        ps.setString(12, student.getIsActive());
-        ps.setInt(13, student.getLevelID());
+        ps.setDate(9, Date.valueOf(student.getEnrollmentDate()));
+        ps.setString(10, student.getAcademicYear());
+        ps.setString(11, student.getPhoneNumber());
+        ps.setString(12, student.getAddress());
+        ps.setString(13, student.getIsActive());
+        ps.setInt(14, student.getLevelID());
 
         int rows = ps.executeUpdate();
 
@@ -138,7 +141,7 @@ public class StudentDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT schoolID, userID, registrationNumber, firstName, lastName,"
+        String query = "SELECT schoolID, userID, registrationNumber, firstName, middleName, lastName,"
                 + " gender, dateOfBirth, enrollmentDate, academicYear,"
                 + " phone, address, isActive, createdAt, updatedAt, levelID FROM students WHERE schoolID = ? ORDER BY firstName";
 
@@ -152,6 +155,7 @@ public class StudentDB {
             Students s = new Students();
             s.setUserID(rs.getInt("userID"));
             s.setFirstName(rs.getString("firstName"));
+            s.setMiddleName(rs.getString("middleName"));
             s.setLastName(rs.getString("lastName"));
             s.setSchoolID(rs.getInt("schoolID"));
             s.setRegistrationNumber(rs.getString("registrationNumber"));
@@ -266,7 +270,7 @@ public class StudentDB {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT schoolID, userID, registrationNumber, firstName, lastName,"
+        String query = "SELECT schoolID, userID, registrationNumber, firstName, middleName, lastName,"
                 + " gender, dateOfBirth, enrollmentDate, academicYear,"
                 + " phone, address, isActive, createdAt, updatedAt FROM students "
                 + "WHERE schoolID = ? AND (registrationNumber =? OR FirstName LIKE ? OR lastName LIKE ? ) ORDER BY firstName";
@@ -284,6 +288,7 @@ public class StudentDB {
             Students s = new Students();
             s.setUserID(rs.getInt("userID"));
             s.setFirstName(rs.getString("firstName"));
+            s.setMiddleName(rs.getString("middleName"));
             s.setLastName(rs.getString("lastName"));
             s.setSchoolID(rs.getInt("schoolID"));
             s.setRegistrationNumber(rs.getString("registrationNumber"));
@@ -308,6 +313,58 @@ public class StudentDB {
         return student;
     }
 
+    public static Students getStudentForProfileByID(String studentID, int schoolID) throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+
+        String query = "SELECT s.*, l.levelName, l.levelCode, d.departmentName "
+                + "FROM students AS s LEFT JOIN levels AS l ON s.levelID = l.levelID "
+                + "LEFT JOIN departments AS d ON l.departmentID = d.departmentID "
+                + "WHERE s.registrationNumber = ? AND s.schoolID =  ?";
+
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, studentID);
+        ps.setInt(2, schoolID);
+
+        ResultSet rs = ps.executeQuery();
+
+        Students s = null;
+        if (rs.next()) {
+            s = new Students();
+
+            s.setUserID(rs.getInt("userID"));
+            s.setSchoolID(rs.getInt("schoolID"));
+            s.setRegistrationNumber(rs.getString("registrationNumber"));
+            s.setLevelName(rs.getString("levelName"));
+            s.setLevelCode(rs.getString("levelCode"));
+            s.setDepartmentName(rs.getString("departmentName"));
+            
+            s.setSchoolID(rs.getInt("schoolID"));
+            s.setFirstName(rs.getString("firstName"));
+            s.setMiddleName(rs.getString("middleName"));
+            s.setLastName(rs.getString("lastName"));
+            s.setGender(rs.getString("gender"));
+            s.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+            s.setEnrollmentDate(rs.getDate("enrollmentDate").toLocalDate());
+            s.setAcademicYear(rs.getString("academicYear"));
+            s.setPhoneNumber(rs.getString("phone"));
+            s.setAddress(rs.getString("address"));
+            s.setIsActive(rs.getString("isActive"));
+            s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
+            s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
+            s.setLevelID(rs.getInt("levelID"));
+            
+            
+           
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return s;
+    }
     
     
 }

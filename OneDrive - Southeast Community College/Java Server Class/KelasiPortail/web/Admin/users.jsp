@@ -12,43 +12,12 @@
         <meta charset="UTF-8">
         <title>Kelasi - Users</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     </head>
     <body>
-        <style>.status-btn{
-                display:inline-block;
-                padding:6px 14px;
-                font-size:13px;
-                font-weight:600;
-                border-radius:8px;
-                text-decoration:none;
-                border:1px solid transparent;
-                cursor:pointer;
-                transition: all 0.2s ease-in-out;
-            }
-
-            .status-btn.disabled{
-                background:#f87171;
-                color:#fff;
-                border-color:#ef4444;
-            }
-            .status-btn.disabled:hover{
-                background:#ef4444;
-            }
-
-            .status-btn.activate{
-                background:#60a5fa;
-                color:#fff;
-                border-color:#3b82f6;
-            }
-            .status-btn.activate:hover{
-                background:#3b82f6;
-            }
-            .mes {
-                color: red;
-            }
-        </style>
+        
         <div class="layout">
 
 
@@ -56,11 +25,17 @@
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
                     <div class="brand-sub">${school.shortName}</div>
+                    <c:choose>
+                        <c:when test="${not empty school.schoolLogo}">
+                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
+                        </c:when>
+
+                    </c:choose>
                 </div>
 
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
@@ -73,7 +48,7 @@
 
                 <div class="topbar">
                     <div>
-                        <h1><i class="fa-solid fa-circle-user"></i> Users</h1>
+                        <h1><i class="fa-solid fa-circle-user"></i> Administrators</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                     </div>
 
@@ -81,7 +56,7 @@
                 </div>
                 <div class="section">
                     <div class="section-header">
-                        <h2>Users List</h2>
+                        <h2>Admin List</h2>
                         <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddUser">+ Add ADMIN</a>
                     </div>
 

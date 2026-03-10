@@ -23,11 +23,17 @@
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
                     <div class="brand-sub">${school.shortName}</div>
+                    <c:choose>
+                        <c:when test="${not empty school.schoolLogo}">
+                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
+                        </c:when>
+
+                    </c:choose>
                 </div>
 
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">All Users</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
@@ -69,7 +75,7 @@
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
                         <input type="hidden" name="userID" value="${user.userID}">
                         <input type="hidden" name="departmentID" value="${departmentID}">
-                        <p>code: ${departmentID}</p>
+                        
 
                         <div class="form-grid">
                             <div class="form-row">
@@ -79,6 +85,11 @@
                             <div class="form-row">
                                 <label class="form-label">First Name</label>
                                 <input class="form-input" type="text" name="firstName" placeholder="John" >
+                            </div>
+                            
+                            <div class="form-row">
+                                <label class="form-label">Middle Name (Optional)</label>
+                                <input class="form-input" type="text" name="middleName" placeholder="John" >
                             </div>
 
                             <div class="form-row">
@@ -100,20 +111,12 @@
                                 <input class="form-input" type="date" name="birthDate">
                             </div>
 
-                            <div class="form-row">
-                                <label class="form-label">Grade Level</label>
-                                <select class="form-input" name="gradeLevel" required>
-                                    <option value="">--Select Grade Level--</option>
-                                    <option value="Freshman">Freshman</option>
-                                    <option value="Sophomore">Sophomore</option>
-                                    <option value="Junior">Junior</option>
-                                    <option value="Senior">Senior</option>
-                                </select>
-                            </div>
+                            
 
 
                             <div class="form-row">
-                                <select name="levelID" required>
+                                <label class="form-label">Level</label>
+                                <select class="form-input" name="levelID" required>
                                     <option value="">-- Select Level --</option>
 
 

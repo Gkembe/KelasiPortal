@@ -103,7 +103,8 @@ public class Private extends HttpServlet {
                     School school = SchoolDB.getSchoolByID(schoolID);
 
                     int totalUsers = UserDB.countUsersBySchool(schoolID);
-                    int totalAdmin = UserDB.countUsersByRoleAndSchool("Admin", schoolID);;
+                    int totalAdmin = UserDB.countUsersByRoleAndSchool("Admin", schoolID);
+                    ;
                     int totalTeachers = UserDB.countUsersByRoleAndSchool("TEACHER", schoolID);
                     int totalStudents = UserDB.countUsersByRoleAndSchool("STUDENT", schoolID);
 
@@ -402,11 +403,10 @@ public class Private extends HttpServlet {
                         school = SchoolDB.getSchoolByID(schoolID);
                         String deptarIdStr = request.getParameter("departmentID");
 
-                         sectionDep = Integer.parseInt(deptarIdStr);
+                        sectionDep = Integer.parseInt(deptarIdStr);
                         LinkedHashMap<String, Department> dep
                                 = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
 
-                        
                         request.setAttribute("departments", dep.values());
                         request.setAttribute("departmentID", sectionDep);
                         request.setAttribute("school", school);
@@ -428,15 +428,16 @@ public class Private extends HttpServlet {
                     boolean isOk = true;
 
                     String depetIdStr = request.getParameter("departmentID");
-                    
+
                     sectionDep = Integer.parseInt(depetIdStr);
                     String registrationNumber = request.getParameter("registrationNumber");
                     String SFirstName = request.getParameter("firstName");
+                    String SMiddleName = request.getParameter("middleName");
                     String SLastName = request.getParameter("lastName");
                     String gender = request.getParameter("gender");
                     String birthDates = request.getParameter("birthDate");
                     String gradeLevel = request.getParameter("gradeLevel");
-                    
+
                     String enrollmentDates = request.getParameter("enrollmentDate");
                     String academicYear = request.getParameter("academicYear");
                     String SphoneNumber = request.getParameter("phoneNumber");
@@ -485,6 +486,14 @@ public class Private extends HttpServlet {
                     } else {
                         SFirstName = SFirstName.trim();
                     }
+                    if (SMiddleName.trim().length() > 50) {
+
+                        errors.add("Middle Name must be between 1 and 50 characters.");
+                        isOk = false;
+                    } else {
+
+                        SMiddleName = SMiddleName.trim();
+                    }
 
                     if (SLastName == null || SLastName.trim().length() <= 0 || SLastName.trim().length() > 50 || SLastName.trim().isEmpty()) {
                         errors.add("Short Name must be 1-50 characters.");
@@ -525,22 +534,7 @@ public class Private extends HttpServlet {
 
                         birthDate = LocalDate.parse(birthDates);
                     }
-                    if (gradeLevel == null || gradeLevel.isEmpty()) {
 
-                        badMessage.add("Grade Level cannot be empty.");
-                        isOk = false;
-
-                    } else if (!gradeLevel.equals("Freshman") && !gradeLevel.equals("Sophomore")
-                            && !gradeLevel.equals("Junior") && !gradeLevel.equals("Senior")) {
-
-                        badMessage.add("Wrong data on Grade Level");
-                        isOk = false;
-                    } else {
-
-                        gradeLevel = gradeLevel.trim();
-                    }
-
-                    
                     if (enrollmentDates == null || enrollmentDates.isEmpty()) {
 
                         badMessage.add("Enrollment Date cannot be empty.");
@@ -693,7 +687,7 @@ public class Private extends HttpServlet {
                     s.setLastName(SLastName);
                     s.setGender(gender);
                     s.setDateOfBirth(birthDate);
-
+                    s.setMiddleName(SMiddleName);
                     s.setEnrollmentDate(enrollmentDate);
                     s.setAcademicYear(academicYear);
                     s.setPhoneNumber(SphoneNumber);
@@ -730,6 +724,7 @@ public class Private extends HttpServlet {
                         if (good) {
 
                             request.setAttribute("message", "Registration successful.");
+                             request.setAttribute("departmentID", sectionDep);
                             url = "/Admin/addStudents.jsp";
                         } else {
                             badMessage.add("Registration failed.");
@@ -1278,6 +1273,24 @@ public class Private extends HttpServlet {
                     request.setAttribute("school", school);
                     url = "/Admin/searchStudent.jsp";
 
+                    break;
+
+                case "studentProfile":
+
+                    String registrationNumbe = request.getParameter("registrationNumber");
+
+                    //int registrationNumbe = Integer.parseInt(r);
+                    schoolID = loggedInUser.getSchoolID();
+
+                    Students st = StudentDB.getStudentForProfileByID(registrationNumbe, schoolID);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    request.setAttribute("school", school);
+                    request.setAttribute("student", st);
+                    url = "/Admin/studentProfile.jsp";
+
+                    //response.sendRedirect("Private?action=listStudents");
                     break;
 
                 //Inable or able student after search
