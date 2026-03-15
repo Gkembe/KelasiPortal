@@ -57,9 +57,11 @@
                         <div class="subtext">
                             ${student.firstName} ${student.lastName} | ${student.registrationNumber}
                         </div>
+
+
                     </div>
 
-                    
+
                 </div>
 
 
@@ -70,7 +72,8 @@
                     <div class="section">
                         <div class="section-header">
                             <h2>Student Information</h2>
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoEditSchoolProfile">Edit</a>
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoEditStudentProfile&registrationNumber=${student.registrationNumber}&studentID=${student.studentID}">Edit Info</a>
+
                         </div>
 
                         <div class="info-grid">
@@ -108,6 +111,17 @@
 
 
                         </div>
+
+
+                    </div>
+
+                    <div class="section">
+                        <h2>Quick Actions</h2>
+                        <div class="actions">
+                            <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddStudentGuardian&registrationNumber=${student.registrationNumber}&studentID=${student.studentID}">+ Add Guardian</a>
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoResetStudentLoginInfo&registrationNumber=${student.registrationNumber}&studentID=${student.studentID}&userID=${student.userID}">Reset login</a>
+                        </div>
+
                     </div>
 
 

@@ -21,12 +21,7 @@
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
                     <div class="brand-sub">${school.shortName}</div>
-                    <c:choose>
-                        <c:when test="${not empty school.schoolLogo}">
-                            <img class="logo"  src="${pageContext.request.contextPath}/uploads/logos/${school.getSchoolLogo()}" alt="School Logo">
-                        </c:when>
-
-                    </c:choose>
+                    
                 </div>
 
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>

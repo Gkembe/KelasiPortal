@@ -8,6 +8,7 @@ import business.Department;
 import business.Levels;
 import business.School;
 import business.SchoolCycle;
+import business.StudentGuardians;
 
 import business.Students;
 import business.Teachers;
@@ -19,6 +20,7 @@ import database.SchoolDB;
 import database.StudentDB;
 import database.TeacherDB;
 import database.SchoolCycleDB;
+import database.StudentGuardianDB;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,6 +73,9 @@ public class Private extends HttpServlet {
         ArrayList<String> badMessage = new ArrayList<>();
         ArrayList<String> ERRORS = new ArrayList<>();
         ArrayList<String> departmentError = new ArrayList<>();
+        ArrayList<String> guardianError = new ArrayList<>();
+        ArrayList<String> EditError = new ArrayList<>();
+        ArrayList<String> resetError = new ArrayList<>();
 
         int sectionDep = 0;
         if (session != null) {
@@ -422,6 +427,562 @@ public class Private extends HttpServlet {
                     request.setAttribute("school", school);
                     url = "/Admin/addStudents.jsp";
                     break;
+
+                case "gotoAddStudentGuardian":
+
+                    String regiNumber = request.getParameter("registrationNumber");
+                    String theStudentID = request.getParameter("studentID");
+
+                    int convStudentID = Integer.parseInt(theStudentID);
+                    //int registrationNumbe = Integer.parseInt(r);
+                    schoolID = loggedInUser.getSchoolID();
+
+                    Students stu = StudentDB.getStudentForProfileByID(regiNumber, schoolID);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    request.setAttribute("registrationNumber", regiNumber);
+                    request.setAttribute("studentID", convStudentID);
+
+                    request.setAttribute("school", school);
+                    url = "/Admin/addStudentGuardian.jsp";
+
+                    break;
+
+                case "gotoEditStudentProfile":
+
+                    String registNumber = request.getParameter("registrationNumber");
+                    String theStudentEditID = request.getParameter("studentID");
+
+                    int convStudentEditID = Integer.parseInt(theStudentEditID);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    Students studentEdit = StudentDB.getStudentForProfileByID(registNumber, schoolID);
+                    request.setAttribute("registrationNumber", registNumber);
+                    request.setAttribute("studentID", convStudentEditID);
+                    request.setAttribute("student", studentEdit);
+                    request.setAttribute("school", school);
+                    url = "/Admin/editStudent.jsp";
+
+                    break;
+
+                case "editStudent":
+
+                    boolean isEditValid = true;
+
+                    String registreNumber = request.getParameter("registrationNumber");
+                    String studentIDEdit = request.getParameter("studentID");
+                    int convertStudentIDEdit = Integer.parseInt(studentIDEdit);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    String EditFirstName = request.getParameter("firstName");
+                    String EditMiddleName = request.getParameter("middleName");
+                    String EditLastName = request.getParameter("lastName");
+                    String Editgender = request.getParameter("gender");
+                    String EditbirthDates = request.getParameter("birthDate");
+
+                    String EditacademicYear = request.getParameter("academicYear");
+                    String EditphoneNumber = request.getParameter("phoneNumber");
+                    String Editaddress = request.getParameter("address");
+
+                    LocalDate EditbirthDate = null;
+
+                    if (EditFirstName == null || EditFirstName.isEmpty() || EditFirstName.trim().length() <= 0 || EditFirstName.trim().length() > 50) {
+                        EditError.add("First Name must be between 1 and 50 characters.");
+                        isEditValid = false;
+                    } else {
+                        EditFirstName = EditFirstName.trim();
+                    }
+                    if (EditMiddleName.trim().length() > 50) {
+
+                        EditError.add("Middle Name must be between 1 and 50 characters.");
+                        isEditValid = false;
+                    } else {
+
+                        EditMiddleName = EditMiddleName.trim();
+                    }
+
+                    if (EditLastName == null || EditLastName.trim().length() <= 0 || EditLastName.trim().length() > 50 || EditLastName.trim().isEmpty()) {
+                        EditError.add("Short Name must be 1-50 characters.");
+                        isEditValid = false;
+                    } else {
+                        EditLastName = EditLastName.trim();
+
+                    }
+
+                    if (Editgender == null || Editgender.isEmpty()) {
+
+                        EditError.add("The Gender cannot be empty.");
+                        isEditValid = false;
+                    } else if (!Editgender.equals("MALE") && !Editgender.equals("FEMALE") && !Editgender.equals("OTHER")) {
+
+                        EditError.add("ERROR, You must select Male, female or other.");
+                        isEditValid = false;
+
+                    } else {
+
+                        Editgender = Editgender.trim();
+                    }
+                    if (EditbirthDates == null || EditbirthDates.isEmpty()) {
+
+                        EditError.add("Select or put your Birth Date");
+                        isEditValid = false;
+                    } else {
+
+                        EditbirthDate = LocalDate.parse(EditbirthDates);
+                    }
+
+                    if (EditacademicYear == null || EditacademicYear.isEmpty()) {
+
+                        EditError.add("academic year cannot be empty.");
+                        isEditValid = false;
+
+                    } else if (EditacademicYear.length() < 9 || EditacademicYear.length() > 9) {
+
+                        EditError.add("Wrong data for Academic year. e.g 2020-2021.");
+                        isEditValid = false;
+                    } else {
+
+                        EditacademicYear = EditacademicYear.trim();
+                    }
+                    if (EditphoneNumber == null || EditphoneNumber.isEmpty()) {
+
+                        EditError.add("Phone number cannot be empty.");
+                        isEditValid = false;
+                    } else {
+
+                        EditphoneNumber = EditphoneNumber.trim();
+                        String regexe = "^\\+1[0-9]{10}";
+
+                        if (!EditphoneNumber.matches(regexe)) {
+
+                            EditError.add("Put the correct phone number e.g +14004205656.");
+                            isEditValid = false;
+                        }
+                    }
+                    if (Editaddress == null || Editaddress.isEmpty()) {
+
+                        EditError.add("Address cannot be empty.");
+                        isEditValid = false;
+                    } else if (Editaddress.length() > 255) {
+
+                        EditError.add("Address cannot be more then 255 charaxters.");
+                        isEditValid = false;
+                    } else {
+
+                        Editaddress = Editaddress.trim();
+                    }
+
+                    if (!isEditValid) {
+
+                        String registrNumber = request.getParameter("registrationNumber");
+                        String theStudentEditedID = request.getParameter("studentID");
+
+                        int convertStudentEditID = Integer.parseInt(theStudentEditedID);
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+
+                        Students studentEdited = StudentDB.getStudentForProfileByID(registrNumber, schoolID);
+                        request.setAttribute("registrationNumber", registrNumber);
+                        request.setAttribute("studentID", convertStudentEditID);
+                        request.setAttribute("student", studentEdited);
+                        request.setAttribute("school", school);
+                        request.setAttribute("ERRORS", EditError);
+                        url = "/Admin/editStudent.jsp";
+
+                        break;
+                    }
+
+                    Students st = new Students();
+
+                    st.setFirstName(EditFirstName);
+                    st.setMiddleName(EditMiddleName);
+                    st.setLastName(EditLastName);
+                    st.setAcademicYear(EditacademicYear);
+                    st.setAddress(Editaddress);
+                    st.setPhoneNumber(EditphoneNumber);
+                    st.setGender(Editgender);
+                    st.setDateOfBirth(EditbirthDate);
+                    st.setSchoolID(schoolID);
+                    st.setStudentID(convertStudentIDEdit);
+
+                    int r = StudentDB.updateStudentInfo(st);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    Students studentEdited = StudentDB.getStudentForProfileByID(registreNumber, schoolID);
+                    request.setAttribute("registrationNumber", registreNumber);
+                    request.setAttribute("studentID", convertStudentIDEdit);
+                    request.setAttribute("student", studentEdited);
+                    request.setAttribute("school", school);
+                    request.setAttribute("success", "Udated successful!");
+                    url = "/Admin/editStudent.jsp";
+
+                    break;
+
+                case "gotoResetStudentLoginInfo":
+
+                    String registraNumber = request.getParameter("registrationNumber");
+                    String IDStudent = request.getParameter("studentID");
+                    String userIDs = request.getParameter("userID");
+
+                    int IDStudentParse = Integer.parseInt(IDStudent);
+                    int IDUser = Integer.parseInt(userIDs);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    User use = StudentDB.selectStudentUser(IDUser, schoolID);
+
+                    Students studentReset = StudentDB.getStudentForProfileByID(registraNumber, schoolID);
+                    request.setAttribute("registrationNumber", registraNumber);
+                    request.setAttribute("studentID", IDStudentParse);
+                    request.setAttribute("student", studentReset);
+                    request.setAttribute("userID", IDUser);
+                    request.setAttribute("user", use);
+                    request.setAttribute("school", school);
+                    url = "/Admin/resetStudentInfo.jsp";
+
+                    break;
+
+                case "resetStudentInfo":
+
+                    boolean isReset = true;
+                    String registratNumber = request.getParameter("registrationNumber");
+                    String IdStudent = request.getParameter("studentID");
+                    String userIds = request.getParameter("userID");
+
+                    String newEmail = request.getParameter("email");
+                    String sPhoneNumber = request.getParameter("phoneNumber");
+                    String NewPassword = request.getParameter("password");
+                    String confirmNewPassword = request.getParameter("confirmPaasword");
+
+                    int IdStudentParse = Integer.parseInt(IdStudent);
+                    int IdUser = Integer.parseInt(userIds);
+
+                    if (newEmail == null || newEmail.trim().isEmpty()) {
+                        resetError.add("Email is required.");
+                        isReset = false;
+                    } else {
+                        newEmail = newEmail.trim();
+                        if (UserDB.adminEmailExists(newEmail)) {
+                            resetError.add("Email already exists.");
+                            isReset = false;
+                        }
+
+                        String regexEmailUser = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+                        if (!newEmail.matches(regexEmailUser)) {
+
+                            resetError.add("Put the valid email address ex. gedeon@gmail.com");
+                            isReset = false;
+
+                        }
+                    }
+
+                    if (sPhoneNumber.length() > 15) {
+
+                        badMessage.add("Phone Number cannot be more then 15 characters.");
+                        isReset = false;
+
+                    } else {
+
+                        sPhoneNumber = sPhoneNumber.trim();
+                        String regexPhones = "^\\+1[0-9]{10}";
+                        if (!sPhoneNumber.matches(regexPhones)) {
+
+                            resetError.add("Put the correct phone number e.g +14004205656.");
+                            isReset = false;
+                        }
+
+                    }
+
+                    // Password validation 
+                    if (NewPassword == null || NewPassword.isBlank()) {
+                        resetError.add("Password cannot be empty.");
+                        isReset = false;
+                    } else {
+                        if (NewPassword.length() < 10) {
+                            resetError.add("Password must be at least 10 characters.");
+                            isReset = false;
+                        }
+                        if (!NewPassword.matches(".*[A-Z].*")) {
+                            resetError.add("Password must contain at least one uppercase letter.");
+                            isReset = false;
+                        }
+                        if (!NewPassword.matches(".*[a-z].*")) {
+                            resetError.add("Password must contain at least one lowercase letter.");
+                            isReset = false;
+                        }
+                        if (!NewPassword.matches(".*[0-9].*")) {
+                            resetError.add("Password must contain at least one number.");
+                            isReset = false;
+                        }
+                        if (!NewPassword.matches(".*[^a-zA-Z0-9].*")) {
+                            resetError.add("Password must contain at least one special character.");
+                            isReset = false;
+                        }
+                    }
+
+                    if (confirmNewPassword == null || !NewPassword.equals(confirmNewPassword)) {
+                        badMessage.add("Password must match confirmation password.");
+                        isReset = false;
+                    }
+                    // STOP HERE if invalid 
+                    if (!isReset) {
+
+                        String registratiNumber = request.getParameter("registrationNumber");
+                        String IdStudents = request.getParameter("studentID");
+                        String userIdss = request.getParameter("userID");
+
+                        int IDStudentParses = Integer.parseInt(IdStudents);
+                        int IDUsers = Integer.parseInt(userIdss);
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
+
+                        Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
+                        request.setAttribute("registrationNumber", registratiNumber);
+                        request.setAttribute("studentID", IDStudentParses);
+                        request.setAttribute("student", studentResets);
+                        request.setAttribute("user", theUser);
+                        request.setAttribute("userID", IDUsers);
+                        request.setAttribute("ERRORS", resetError);
+                        url = "/Admin/resetStudentInfo.jsp";
+                        break;
+                    }
+
+                    // Hash password
+                    String hashePassword = null;
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    try {
+                        SecretKeyCredentialHandler ch = new SecretKeyCredentialHandler();
+                        ch.setAlgorithm("PBKDF2WithHmacSHA256");
+                        ch.setKeyLength(256);
+                        ch.setSaltLength(16);
+                        ch.setIterations(4096);
+
+                        hashePassword = ch.mutate(NewPassword);
+
+                    } catch (Exception e) {
+
+                        resetError.add("Password encryption failed.");
+                        request.setAttribute("ERRORS", resetError);
+                        url = "/Admin/resetStudentInfo.jsp";
+                        break;
+                    }
+
+                    User userss = new User();
+
+                    userss.setEmail(newEmail);
+                    userss.setPhoneNumber(sPhoneNumber);
+                    userss.setPassword(hashePassword);
+                    userss.setUserID(IdUser);
+                    userss.setSchoolID(schoolID);
+
+                    StudentDB.updateStudentUserInfo(userss);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
+
+                    Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
+                    request.setAttribute("registrationNumber", registratNumber);
+                    request.setAttribute("studentID", IdStudentParse);
+                    request.setAttribute("student", studentResets);
+                    request.setAttribute("userID", IdUser);
+                    request.setAttribute("success", "Updated successful!");
+                    request.setAttribute("user", theUser);
+                    request.setAttribute("school", school);
+                    url = "/Admin/resetStudentInfo.jsp";
+                    break;
+
+                case "addStudentGuardian":
+
+                    boolean isGuardian = true;
+
+                    String studentIDforGuardian = request.getParameter("studentID");
+                    int studentIDCovert = Integer.parseInt(studentIDforGuardian);
+                    String regisNumber = request.getParameter("registrationNumber");
+                    String fullName = request.getParameter("fullName");
+                    String phone = request.getParameter("phone");
+                    String email = request.getParameter("email");
+                    String homeAddress = request.getParameter("address");
+                    String occupation = request.getParameter("occupation");
+                    String relationship = request.getParameter("relationship");
+                    String isPrimary = request.getParameter("isPrimary");
+
+                    if (regisNumber == null || regisNumber.isEmpty()) {
+
+                        guardianError.add("registration Number is empty.");
+                        isGuardian = false;
+
+                    }
+
+                    if (fullName == null || fullName.trim().isEmpty()) {
+
+                        guardianError.add("Full name cannot be empty.");
+                        isGuardian = false;
+                    } else if (fullName.length() > 50) {
+
+                        guardianError.add("full name cannot have more than 50 characteres");
+                        isGuardian = false;
+                    } else {
+
+                        fullName = fullName.trim();
+
+                    }
+
+                    if (phone == null || phone.trim().isEmpty()) {
+
+                        guardianError.add("Phone number cannot be empty.");
+                        isGuardian = false;
+                    } else {
+
+                        phone = phone.trim();
+
+                        String regexPhone = "^\\+1[0-9]{10}";
+
+                        if (!phone.matches(regexPhone)) {
+
+                            guardianError.add("Put the correct phone number e.g +14004205656.");
+                            isGuardian = false;
+                        }
+                    }
+                    if (email == null || email.trim().isEmpty()) {
+
+                        guardianError.add("Email cannot be empty.");
+                        isGuardian = false;
+                    } else if (email.length() > 100) {
+
+                        guardianError.add("Email cannot contain more than 100 chararcters");
+                        isGuardian = false;
+                    } else {
+
+                        email = email.trim();
+
+                        String regexEmailGuardian = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+                        if (!email.matches(regexEmailGuardian)) {
+
+                            guardianError.add("Put the valid email address ex. gedeon@gmail.com");
+                            isGuardian = false;
+
+                        }
+
+                    }
+
+                    if (homeAddress == null || homeAddress.trim().isEmpty()) {
+
+                        guardianError.add("Home Address cannot be empty.");
+                        isGuardian = false;
+                    } else if (homeAddress.length() > 250) {
+
+                        guardianError.add("Home address cannot conatain more than 250 characters.");
+                        isGuardian = false;
+                    } else {
+
+                        homeAddress = homeAddress.trim();
+                    }
+
+                    if (occupation == null || occupation.trim().isEmpty()) {
+
+                        guardianError.add("Please choose an occupation.");
+                        isGuardian = false;
+                    } else if (occupation.length() > 100) {
+
+                        guardianError.add("Occupation cannot contain more than 100 characters.");
+                        isGuardian = false;
+                    } else {
+
+                        occupation = occupation.trim();
+
+                    }
+
+                    if (relationship == null || relationship.trim().isEmpty()) {
+
+                        guardianError.add("Relationship cannot be empty.");
+                        isGuardian = false;
+                    } else if (relationship.length() > 50) {
+
+                        guardianError.add("Relationship cannot be more than 50 characters.");
+                        isGuardian = false;
+                    } else {
+
+                        relationship = relationship.trim();
+                    }
+
+                    if (isPrimary == null || isPrimary.trim().isEmpty()) {
+
+                        guardianError.add("first responsable cannot be empty.");
+                        isGuardian = false;
+                    } else if (!isPrimary.equals("Yes") && !isPrimary.equals("No")) {
+
+                        guardianError.add("You must choose yes or no.");
+                        isGuardian = false;
+                    } else {
+
+                        isPrimary = isPrimary.trim();
+                    }
+
+                    if (!isGuardian) {
+
+                        String regisNumb = request.getParameter("registrationNumber");
+                        String studentIDGuardian = request.getParameter("studentID");
+
+                        int convertStudentID = Integer.parseInt(studentIDGuardian);
+                        schoolID = loggedInUser.getSchoolID();
+
+                        Students studentNum = StudentDB.getStudentForProfileByID(regisNumb, schoolID);
+
+                        school = SchoolDB.getSchoolByID(schoolID);
+
+                        request.setAttribute("registrationNumber", regisNumber);
+                        request.setAttribute("studentID", convertStudentID);
+
+                        request.setAttribute("student", studentNum);
+                        request.setAttribute("ERROR", guardianError);
+                        request.setAttribute("school", school);
+                        url = "/Admin/addStudentGuardian.jsp";
+
+                        break;
+                    }
+
+                    StudentGuardians g = new StudentGuardians();
+
+                    g.setFullName(fullName);
+                    g.setPhone(phone);
+                    g.setEmail(email);
+                    g.setAddress(homeAddress);
+                    g.setStudentID(studentIDCovert);
+                    g.setOccupation(occupation);
+                    g.setRelationship(relationship);
+                    g.setIsPrimary(isPrimary);
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    Students theStudent = StudentDB.getStudentForProfileByID(regisNumber, schoolID);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    StudentGuardianDB.insertGuardain(g);
+                    request.setAttribute("registrationNumber", regisNumber);
+                    request.setAttribute("studentID", studentIDCovert);
+
+                    request.setAttribute("student", theStudent);
+                    request.setAttribute("ERROR", guardianError);
+                    request.setAttribute("success", "Guardian added successfull");
+                    request.setAttribute("school", school);
+                    url = "/Admin/addStudentGuardian.jsp";
+                    break;
                 case "addStudent":
 
                     //GET PARAMETERES FOR STUDENT 
@@ -436,7 +997,6 @@ public class Private extends HttpServlet {
                     String SLastName = request.getParameter("lastName");
                     String gender = request.getParameter("gender");
                     String birthDates = request.getParameter("birthDate");
-                    String gradeLevel = request.getParameter("gradeLevel");
 
                     String enrollmentDates = request.getParameter("enrollmentDate");
                     String academicYear = request.getParameter("academicYear");
@@ -724,7 +1284,7 @@ public class Private extends HttpServlet {
                         if (good) {
 
                             request.setAttribute("message", "Registration successful.");
-                             request.setAttribute("departmentID", sectionDep);
+                            request.setAttribute("departmentID", sectionDep);
                             url = "/Admin/addStudents.jsp";
                         } else {
                             badMessage.add("Registration failed.");
@@ -1282,12 +1842,13 @@ public class Private extends HttpServlet {
                     //int registrationNumbe = Integer.parseInt(r);
                     schoolID = loggedInUser.getSchoolID();
 
-                    Students st = StudentDB.getStudentForProfileByID(registrationNumbe, schoolID);
+                    Students stud = StudentDB.getStudentForProfileByID(registrationNumbe, schoolID);
 
                     school = SchoolDB.getSchoolByID(schoolID);
 
+                    request.setAttribute("registrationNumber", registrationNumbe);
                     request.setAttribute("school", school);
-                    request.setAttribute("student", st);
+                    request.setAttribute("student", stud);
                     url = "/Admin/studentProfile.jsp";
 
                     //response.sendRedirect("Private?action=listStudents");
@@ -1456,6 +2017,9 @@ public class Private extends HttpServlet {
                     LevelDB.insertLevels(level);
 
                     school = SchoolDB.getSchoolByID(schoolID);
+                    LinkedHashMap<String, Department> depart = DepartmentDB.selectAllDepartmentByIDAndStatus(schoolID);
+
+                    request.setAttribute("department", depart);
                     request.setAttribute("success", "Level added successfull!");
                     request.setAttribute("school", school);
 
@@ -1561,11 +2125,13 @@ public class Private extends HttpServlet {
             }
         } catch (SQLException | NamingException e) {
             e.printStackTrace();
+
             request.setAttribute("message", "Error retrieving users");
             url = "/errorPage.jsp";
         }
 
-        getServletContext().getRequestDispatcher(url).forward(request, response);
+        getServletContext()
+                .getRequestDispatcher(url).forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -334,6 +335,7 @@ public class StudentDB {
             s = new Students();
 
             s.setUserID(rs.getInt("userID"));
+            s.setStudentID(rs.getInt("studentID"));
             s.setSchoolID(rs.getInt("schoolID"));
             s.setRegistrationNumber(rs.getString("registrationNumber"));
             s.setLevelName(rs.getString("levelName"));
@@ -366,5 +368,113 @@ public class StudentDB {
         return s;
     }
     
+    public static int updateStudentInfo(Students s) throws SQLException, NamingException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String sql = "UPDATE students "
+                + "SET firstName = ?, middleName = ?, lastName = ?, "
+                + "gender = ?, dateOfBirth = ?, address = ?, academicYear = ?, phone = ? "
+                + "WHERE schoolID = ? and studentID = ?";
+
+        try {
+            ps = connection.prepareStatement(sql);
+
+            ps.setString(1, s.getFirstName());
+            ps.setString(2, s.getMiddleName());
+            ps.setString(3, s.getLastName());
+            ps.setString(4, s.getGender());
+            ps.setDate(5, Date.valueOf(s.getDateOfBirth()));
+            ps.setString(6, s.getAddress());
+            ps.setString(7, s.getAcademicYear());
+            ps.setString(8, s.getPhoneNumber());
+            ps.setInt(9, s.getSchoolID());
+            ps.setInt(10, s.getStudentID());
+            
+
+            return ps.executeUpdate();
+
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            pool.freeConnection(connection);
+        }
+    }
+    
+    public static User selectStudentUser(int userID, int schoolID) throws NamingException, SQLException {
+
+        
+        ConnectionPool pool = ConnectionPool.getInstance();
+
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        User user = null;
+
+        connection = pool.getConnection();
+
+        String query = "SELECT username, email, phone FROM users WHERE id = ? AND schoolID = ? AND role = 'STUDENT'";
+
+        ps = connection.prepareStatement(query);
+        ps.setInt(1, userID);
+        ps.setInt(2, schoolID);
+
+        rs = ps.executeQuery();
+
+        
+        if (rs.next()) {
+
+            user = new User();
+            
+            user.setEmail(rs.getString("email"));
+            user.setUserName(rs.getString("username"));
+            user.setPhoneNumber(rs.getString("phone"));
+            
+            
+            
+            
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return user;
+
+    }
+
+    public static int updateStudentUserInfo(User u) throws SQLException, NamingException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String sql = "UPDATE users "
+                + "SET phone = ?, email = ?, password = ?, "
+                
+                + "WHERE id = ? AND schoolID = ? AND role = 'STUDENT'";
+
+        try {
+            ps = connection.prepareStatement(sql);
+
+            ps.setString(1, u.getPhoneNumber());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getPassword());
+           
+            
+
+            return ps.executeUpdate();
+
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            pool.freeConnection(connection);
+        }
+    }
     
 }

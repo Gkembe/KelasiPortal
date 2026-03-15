@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class Students implements Serializable{
     
-    private int schoolID, userID;
+    private int schoolID, userID, studentID;
     private String registrationNumber, firstName, middleName, lastName, gender;
     private LocalDate dateOfBirth;
    
@@ -29,9 +29,10 @@ public class Students implements Serializable{
     
     public Students (){}
 
-    public Students(int schoolID, int userID, String registrationNumber, String firstName, String middleName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT, int levelID) {
+    public Students(int schoolID, int userID, int studentID, String registrationNumber, String firstName, String middleName, String lastName, String gender, LocalDate dateOfBirth, LocalDate enrollmentDate, String academicYear, String phoneNumber, String address, String isActive, LocalDateTime createdAT, LocalDateTime updatedAT, int levelID) {
         this.schoolID = schoolID;
         this.userID = userID;
+        this.studentID = studentID;
         this.registrationNumber = registrationNumber;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -80,6 +81,14 @@ public class Students implements Serializable{
 
     public void setUserID(int userID) {
         this.userID = userID;
+    }
+
+    public int getStudentID() {
+        return studentID;
+    }
+
+    public void setStudentID(int studentID) {
+        this.studentID = studentID;
     }
 
     public String getRegistrationNumber() {

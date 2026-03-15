@@ -102,7 +102,7 @@ h1{
 .logo{
     width:90px;
     height:90px;
-    border-radius:50px;
+    border-radius:60px;
     object-fit:cover;
     border:1px solid #ddd;
     background:white;
