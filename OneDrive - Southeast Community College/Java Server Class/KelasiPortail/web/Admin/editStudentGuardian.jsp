@@ -1,11 +1,8 @@
 <%-- 
-    Document   : resetStudentInfo
-    Created on : Mar 13, 2026, 12:17:36 PM
+    Document   : editStudentGuardian
+    Created on : May 17, 2026, 7:43:12 AM
     Author     : kembe
 --%>
-
-
-
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -52,18 +49,18 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Reset Student</h1>
-                        <div class="subtext">Fill student information</div>
+                        <h1>Edit Student</h1>
+                        <div class="subtext">Fill Guardian information</div>
                     </div>
                 </div>
 
                 <div class="section">
                     <div class="section-header">
-                        <h2>Student Information</h2>
+                        <h2>Guardian Information</h2>
                     </div>
                     <ul style="color: red">
 
-                        <c:forEach var="e" items="${ERRORS}">
+                        <c:forEach var="e" items="${ERROR}">
 
 
                             <li>${e}</li>
@@ -71,47 +68,72 @@
 
 
                     </ul>
-                    <p>${success}</p>
+                    <p style="color: green">${success}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
-                        <input type="hidden" name="action" value="resetStudentInfo">
+                        <input type="hidden" name="action" value="editGuardian">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
-                        <input type="hidden" name="userID" value="${student.userID}">
+                        <input type="hidden" name="guardianID" value="${guardian.guardianID}">
                         <input type="hidden" name="studentID" value="${student.studentID}">
                         <input type="hidden" name="registrationNumber" value="${student.registrationNumber}">
+                        
                        
                         <div class="form-grid">
 
                             <div class="form-row">
-                                <label class="form-label">Phone Number</label>
-                                <input class="form-input" type="text" name="phoneNumber" value="${user.phoneNumber}" >
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-input" value="${guardian.fullName}"name="fullName" placeholder="Jean Robert"  />
                             </div>
 
                             <div class="form-row">
-                                <label class="form-label">Email</label>
-                                <input class="form-input" type="text" name="email" value="${user.email}" >
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-input" value="${guardian.phone}" name="phone" placeholder="+14023307287"  />
                             </div>
 
                             <div class="form-row">
-                                <label class="form-label">New Password</label>
-                                <input class="form-input" type="text" name="password">
+                                <label for="email" class="form-label">Email </label>
+                                <input type="text" class="form-input" name="email" value="${guardian.email}" placeholder="JeanRobert@gmail.com"  />
                             </div>
+
                             <div class="form-row">
-                                <label class="form-label">Confirm Password</label>
-                                <input class="form-input" type="text" name="confirmPassword">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-input" name="address" value="${guardian.address}" placeholder="Av Sao 17 Q/Kindele "  />
+                            </div>
+
+                            <div class="form-row">
+                                <label for="occupation" class="form-label">Occupation</label>
+                                <input type="text" class="form-input" name="occupation" value="${guardian.occupation}" placeholder="Software engineer"  />
+                            </div>
+
+                            <div class="form-row">
+                                <label class="form-label">Relationship</label>
+                                <select class="form-input" name="relationship" value="${guardian.relationship}" required>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Uncle">Uncle</option>
+                                    <option value="Aunt">Aunt</option>
+                                    <option value="Brother">Brother</option>
+                                    <option value="Sister">Sister</option>
+                                    <option value="Other">Other</option>
+                                </select></div>
+
+                            <div class="form-row">
+                                <label class="form-label">Default</label>
+                                <select class="form-input" value="${guardian.isPrimary}" name="isPrimary" required>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+
+                                </select>
                             </div>
                         </div>
-                            
-                            <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Add Student">
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=studentProfile&registrationNumber=${registrationNumber}&studentID=${student.studentID}&userID=${student.userID}">Cancel</a>
+
+                        <div class="actions">
+                            <input class="btn btn-primary" type="submit" value="Edit Student">
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=studentProfile&registrationNumber=${registrationNumber}&studentID=${studentID}&userID=${student.userID}">Cancel</a>
                         </div>
-                            
                     </form>
                 </div>
             </div>
         </div>
     </body>
 </html>
-
-

@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+        
     </head>
     <body>
 
@@ -34,14 +34,15 @@
                     </c:choose>
                 </div>
 
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Dashboard</a>
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile">School Profile</a>
-                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=listUsers">Administrators</a>
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers">Teachers</a>
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents">Students</a>
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Levels</a>
-                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Section</a>
-                <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout">Logout</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile"><i class="fas fa-school"></i> School Profile</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers"><i class="fas fa-user-shield"></i> Administrators</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listStudents"><i class="fas fa-user-graduate"></i> Students</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList"><i class="fas fa-layer-group"></i> Levels</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList"><i class="fas fa-th-large"></i> Section</a>
+
+                <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
 
 
@@ -49,7 +50,7 @@
 
                 <div class="topbar">
                     <div>
-                        <h1><i class="fa-solid fa-arrow-up-wide-short"></i> Levels</h1>
+                        <h1><i class="fas fa-layer-group"></i></i> Levels</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                         <div class="searchDiv">
                             <form class="forms" action="Private" method="post">
@@ -87,10 +88,10 @@
                                 <tr>
                                     <th>Level Name</th>
                                     <th>level Code</th>
-                                    
+
                                     <th>Status</th>
                                     <th>Created AT</th>
-                                    
+
                                     <th>Inactive</th>
                                     <th>Active</th>
 
@@ -112,13 +113,13 @@
                                     <c:otherwise>
                                         <c:forEach var="l" items="${levels.values()}">
                                             <tr>
-                                                
+
                                                 <td>${l.levelName}</td>
                                                 <td>${l.levelCode}</td>
-                                                
+
                                                 <td>${l.status}</td>
                                                 <td>${l.getFormattedTime()}</td>
-                                                
+
                                                 <td><a class="status-btn disabled" 
                                                        href="${pageContext.request.contextPath}/Private?action=inactiveLevel&levelID=${l.levelID}"
                                                        onclick="return confirm('Are you sure you want to deactive this level?')"

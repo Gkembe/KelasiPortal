@@ -144,7 +144,7 @@ public class StudentDB {
 
         String query = "SELECT schoolID, userID, registrationNumber, firstName, middleName, lastName,"
                 + " gender, dateOfBirth, enrollmentDate, academicYear,"
-                + " phone, address, isActive, createdAt, updatedAt, levelID FROM students WHERE schoolID = ? ORDER BY firstName";
+                + " phone, address, isActive, createdAt, updatedAt, levelID, studentID FROM students WHERE schoolID = ? ORDER BY firstName";
 
         ps = connection.prepareStatement(query);
         ps.setInt(1, schoolID);
@@ -155,6 +155,7 @@ public class StudentDB {
         while (rs.next()) {
             Students s = new Students();
             s.setUserID(rs.getInt("userID"));
+           
             s.setFirstName(rs.getString("firstName"));
             s.setMiddleName(rs.getString("middleName"));
             s.setLastName(rs.getString("lastName"));
@@ -171,6 +172,7 @@ public class StudentDB {
             s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
             s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
             s.setLevelID(rs.getInt("levelID"));
+             s.setStudentID(rs.getInt("studentID"));
 
             student.put(s.getRegistrationNumber(), s);
         }
@@ -273,7 +275,7 @@ public class StudentDB {
 
         String query = "SELECT schoolID, userID, registrationNumber, firstName, middleName, lastName,"
                 + " gender, dateOfBirth, enrollmentDate, academicYear,"
-                + " phone, address, isActive, createdAt, updatedAt FROM students "
+                + " phone, address, isActive, createdAt, updatedAt,  studentID FROM students "
                 + "WHERE schoolID = ? AND (registrationNumber =? OR FirstName LIKE ? OR lastName LIKE ? ) ORDER BY firstName";
 
         ps = connection.prepareStatement(query);
@@ -288,6 +290,7 @@ public class StudentDB {
         while (rs.next()) {
             Students s = new Students();
             s.setUserID(rs.getInt("userID"));
+            
             s.setFirstName(rs.getString("firstName"));
             s.setMiddleName(rs.getString("middleName"));
             s.setLastName(rs.getString("lastName"));
@@ -303,6 +306,7 @@ public class StudentDB {
             s.setIsActive(rs.getString("isActive"));
             s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
             s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
+            s.setStudentID(rs.getInt("studentID"));
 
             student.put(s.getRegistrationNumber(), s);
         }
@@ -335,7 +339,7 @@ public class StudentDB {
             s = new Students();
 
             s.setUserID(rs.getInt("userID"));
-            s.setStudentID(rs.getInt("studentID"));
+            
             s.setSchoolID(rs.getInt("schoolID"));
             s.setRegistrationNumber(rs.getString("registrationNumber"));
             s.setLevelName(rs.getString("levelName"));
@@ -356,6 +360,7 @@ public class StudentDB {
             s.setCreatedAT(rs.getTimestamp("createdAt").toLocalDateTime());
             s.setUpdatedAT(rs.getTimestamp("updatedAt").toLocalDateTime());
             s.setLevelID(rs.getInt("levelID"));
+            s.setStudentID(rs.getInt("studentID"));
             
             
            
@@ -454,7 +459,7 @@ public class StudentDB {
         PreparedStatement ps = null;
 
         String sql = "UPDATE users "
-                + "SET phone = ?, email = ?, password = ?, "
+                + "SET phone = ?, email = ?, password = ? "
                 
                 + "WHERE id = ? AND schoolID = ? AND role = 'STUDENT'";
 
@@ -464,11 +469,16 @@ public class StudentDB {
             ps.setString(1, u.getPhoneNumber());
             ps.setString(2, u.getEmail());
             ps.setString(3, u.getPassword());
+            ps.setInt(4, u.getUserID());
+            ps.setInt(5, u.getSchoolID());
            
             
+            int rows  = ps.executeUpdate();
 
-            return ps.executeUpdate();
+           
+            return rows;
 
+            
         } finally {
             if (ps != null) {
                 ps.close();

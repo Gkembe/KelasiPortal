@@ -443,6 +443,7 @@ public class Private extends HttpServlet {
 
                     request.setAttribute("registrationNumber", regiNumber);
                     request.setAttribute("studentID", convStudentID);
+                    request.setAttribute("student", stu);
 
                     request.setAttribute("school", school);
                     url = "/Admin/addStudentGuardian.jsp";
@@ -660,7 +661,7 @@ public class Private extends HttpServlet {
                     String newEmail = request.getParameter("email");
                     String sPhoneNumber = request.getParameter("phoneNumber");
                     String NewPassword = request.getParameter("password");
-                    String confirmNewPassword = request.getParameter("confirmPaasword");
+                    String confirmNewPassword = request.getParameter("confirmPassword");
 
                     int IdStudentParse = Integer.parseInt(IdStudent);
                     int IdUser = Integer.parseInt(userIds);
@@ -670,10 +671,10 @@ public class Private extends HttpServlet {
                         isReset = false;
                     } else {
                         newEmail = newEmail.trim();
-                        if (UserDB.adminEmailExists(newEmail)) {
-                            resetError.add("Email already exists.");
-                            isReset = false;
-                        }
+//                        if (UserDB.adminEmailExists(newEmail)) {
+//                            resetError.add("Email already exists.");
+//                            isReset = false;
+//                        }
 
                         String regexEmailUser = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
@@ -730,7 +731,7 @@ public class Private extends HttpServlet {
                     }
 
                     if (confirmNewPassword == null || !NewPassword.equals(confirmNewPassword)) {
-                        badMessage.add("Password must match confirmation password.");
+                        resetError.add("Password must match confirmation password.");
                         isReset = false;
                     }
                     // STOP HERE if invalid 
@@ -750,6 +751,7 @@ public class Private extends HttpServlet {
                         Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
                         request.setAttribute("registrationNumber", registratiNumber);
                         request.setAttribute("studentID", IDStudentParses);
+                        request.setAttribute("school", school);
                         request.setAttribute("student", studentResets);
                         request.setAttribute("user", theUser);
                         request.setAttribute("userID", IDUsers);
@@ -782,6 +784,10 @@ public class Private extends HttpServlet {
 
                     User userss = new User();
 
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
+
                     userss.setEmail(newEmail);
                     userss.setPhoneNumber(sPhoneNumber);
                     userss.setPassword(hashePassword);
@@ -789,10 +795,6 @@ public class Private extends HttpServlet {
                     userss.setSchoolID(schoolID);
 
                     StudentDB.updateStudentUserInfo(userss);
-
-                    schoolID = loggedInUser.getSchoolID();
-                    school = SchoolDB.getSchoolByID(schoolID);
-                    User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
 
                     Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
                     request.setAttribute("registrationNumber", registratNumber);
@@ -983,6 +985,240 @@ public class Private extends HttpServlet {
                     request.setAttribute("school", school);
                     url = "/Admin/addStudentGuardian.jsp";
                     break;
+
+                case "gotoEditGuardian":
+
+                    String registNumbers = request.getParameter("registrationNumber");
+                    String theStudentEditIDs = request.getParameter("studentID");
+                    String guardianIDss = request.getParameter("guardianID");
+                    int convStudentEditIDs = Integer.parseInt(theStudentEditIDs);
+
+                    int guardiansIDs = Integer.parseInt(guardianIDss);
+
+                    StudentGuardians guar = StudentGuardianDB.selectStudentGuardian(convStudentEditIDs, guardiansIDs);
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    Students studentEdits = StudentDB.getStudentForProfileByID(registNumbers, schoolID);
+                    request.setAttribute("registrationNumber", registNumbers);
+                    request.setAttribute("studentID", convStudentEditIDs);
+                    request.setAttribute("student", studentEdits);
+                    request.setAttribute("school", school);
+                    request.setAttribute("guardian", guar);
+
+                    url = "/Admin/editStudentGuardian.jsp";
+                    break;
+
+                case "editGuardian":
+
+                    boolean isGuardians = true;
+
+                    ArrayList<String> theError = new ArrayList<>();
+                    String studentIDforGuardians = request.getParameter("studentID");
+                    int studentIDCovertss = Integer.parseInt(studentIDforGuardians);
+                    String regisNumbers = request.getParameter("registrationNumber");
+                    String fullNames = request.getParameter("fullName");
+                    String phones = request.getParameter("phone");
+                    String emails = request.getParameter("email");
+                    String homeAddresss = request.getParameter("address");
+                    String occupations = request.getParameter("occupation");
+                    String relationships = request.getParameter("relationship");
+                    String isPrimarys = request.getParameter("isPrimary");
+                    String guardianIDsss = request.getParameter("guardianID");
+
+                    int guardiansIDss = Integer.parseInt(guardianIDsss);
+
+                    //StudentGuardians guard = StudentGuardianDB.selectStudentGuardian(studentIDCovertss, guardiansIDss);
+                    if (regisNumbers == null || regisNumbers.isEmpty()) {
+
+                        theError.add("registration Number is empty.");
+                        isGuardians = false;
+
+                    }
+
+                    if (fullNames == null || fullNames.trim().isEmpty()) {
+
+                        theError.add("Full name cannot be empty.");
+                        isGuardians = false;
+                    } else if (fullNames.length() > 50) {
+
+                        theError.add("full name cannot have more than 50 characteres");
+                        isGuardians = false;
+                    } else {
+
+                        fullNames = fullNames.trim();
+
+                    }
+
+                    if (phones == null || phones.trim().isEmpty()) {
+
+                        theError.add("Phone number cannot be empty.");
+                        isGuardians = false;
+                    } else {
+
+                        phones = phones.trim();
+
+                        String regexPhones = "^\\+1[0-9]{10}";
+
+                        if (!phones.matches(regexPhones)) {
+
+                            theError.add("Put the correct phone number e.g +14004205656.");
+                            isGuardians = false;
+                        }
+                    }
+                    if (emails == null || emails.trim().isEmpty()) {
+
+                        theError.add("Email cannot be empty.");
+                        isGuardians = false;
+                    } else if (emails.length() > 100) {
+
+                        theError.add("Email cannot contain more than 100 chararcters");
+                        isGuardians = false;
+                    } else {
+
+                        emails = emails.trim();
+
+                        String regexEmailGuardians = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+                        if (!emails.matches(regexEmailGuardians)) {
+
+                            theError.add("Put the valid email address ex. gedeon@gmail.com");
+                            isGuardians = false;
+
+                        }
+
+                    }
+
+                    if (homeAddresss == null || homeAddresss.trim().isEmpty()) {
+
+                        theError.add("Home Address cannot be empty.");
+                        isGuardians = false;
+                    } else if (homeAddresss.length() > 250) {
+
+                        theError.add("Home address cannot conatain more than 250 characters.");
+                        isGuardians = false;
+                    } else {
+
+                        homeAddresss = homeAddresss.trim();
+                    }
+
+                    if (occupations == null || occupations.trim().isEmpty()) {
+
+                        theError.add("Please choose an occupation.");
+                        isGuardians = false;
+                    } else if (occupations.length() > 100) {
+
+                        theError.add("Occupation cannot contain more than 100 characters.");
+                        isGuardians = false;
+                    } else {
+
+                        occupations = occupations.trim();
+
+                    }
+
+                    if (relationships == null || relationships.trim().isEmpty()) {
+
+                        theError.add("Relationship cannot be empty.");
+                        isGuardians = false;
+                    } else if (relationships.length() > 50) {
+
+                        theError.add("Relationship cannot be more than 50 characters.");
+                        isGuardians = false;
+                    } else {
+
+                        relationships = relationships.trim();
+                    }
+
+                    if (isPrimarys == null || isPrimarys.trim().isEmpty()) {
+
+                        theError.add("first responsable cannot be empty.");
+                        isGuardians = false;
+                    } else if (!isPrimarys.equals("Yes") && !isPrimarys.equals("No")) {
+
+                        theError.add("You must choose yes or no.");
+                        isGuardians = false;
+                    } else {
+
+                        isPrimarys = isPrimarys.trim();
+                    }
+
+                    if (!isGuardians) {
+
+                        String regisNumbss = request.getParameter("registrationNumber");
+                        String studentIDGuardianss = request.getParameter("studentID");
+                        String guardianIDssss = request.getParameter("guardianID");
+
+                        int guardiansIDsss = Integer.parseInt(guardianIDssss);
+
+                        StudentGuardians guard = StudentGuardianDB.selectStudentGuardian(studentIDCovertss, guardiansIDss);
+                        int convertStudentID = Integer.parseInt(studentIDGuardianss);
+                        schoolID = loggedInUser.getSchoolID();
+
+                        Students studentNums = StudentDB.getStudentForProfileByID(regisNumbss, schoolID);
+
+                        school = SchoolDB.getSchoolByID(schoolID);
+
+                        request.setAttribute("registrationNumber", regisNumbers);
+                        request.setAttribute("studentID", convertStudentID);
+
+                        request.setAttribute("guardian", guard);
+                        request.setAttribute("student", studentNums);
+                        request.setAttribute("ERROR", theError);
+                        request.setAttribute("school", school);
+                        url = "/Admin/editStudentGuardian.jsp";
+
+                        break;
+                    }
+
+                    StudentGuardians gd = new StudentGuardians();
+
+                    gd.setGuardianID(guardiansIDss);
+                    gd.setFullName(fullNames);
+                    gd.setPhone(phones);
+                    gd.setEmail(emails);
+                    gd.setAddress(homeAddresss);
+                    gd.setStudentID(studentIDCovertss);
+                    gd.setOccupation(occupations);
+                    gd.setRelationship(relationships);
+                    gd.setIsPrimary(isPrimarys);
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    StudentGuardians guardi = StudentGuardianDB.selectStudentGuardian(studentIDCovertss, guardiansIDss);
+
+                    Students theStudentss = StudentDB.getStudentForProfileByID(regisNumbers, schoolID);
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    StudentGuardianDB.updateGuardianInfo(gd);
+                    request.setAttribute("registrationNumber", regisNumbers);
+                    request.setAttribute("studentID", studentIDCovertss);
+                    request.setAttribute("guardianID", guardiansIDss);
+                    request.setAttribute("student", theStudentss);
+                    request.setAttribute("ERROR", theError);
+                    request.setAttribute("guardian", guardi);
+                    request.setAttribute("success", "Guardian added successfull");
+                    request.setAttribute("school", school);
+                    url = "/Admin/editStudentGuardian.jsp";
+
+                    break;
+
+                case "deactivateGuardian":
+
+                    String regisNumbssss = request.getParameter("registrationNumber");
+                    String studentIDGuardianssss = request.getParameter("studentID");
+                    String guardianIDsssss = request.getParameter("guardianID");
+
+                    int convertStudentIDssss = Integer.parseInt(studentIDGuardianssss);
+                    
+                    int guardiansIDssss = Integer.parseInt(guardianIDsssss);
+
+                    StudentGuardianDB.deactiveGuardian(guardiansIDssss, convertStudentIDssss);
+                    
+                    request.setAttribute("registrationNumber", regisNumbssss);
+                    
+                    response.sendRedirect("Private?action=studentProfile&registrationNumber=" + regisNumbssss+"&studentID="+ convertStudentIDssss + "&guardianID= " + guardianIDsssss );
+                    return;
                 case "addStudent":
 
                     //GET PARAMETERES FOR STUDENT 
@@ -1839,16 +2075,21 @@ public class Private extends HttpServlet {
 
                     String registrationNumbe = request.getParameter("registrationNumber");
 
-                    //int registrationNumbe = Integer.parseInt(r);
+                    String studentIDsss = request.getParameter("studentID");
+                    int ssID = Integer.parseInt(studentIDsss);
                     schoolID = loggedInUser.getSchoolID();
 
                     Students stud = StudentDB.getStudentForProfileByID(registrationNumbe, schoolID);
 
                     school = SchoolDB.getSchoolByID(schoolID);
+                    LinkedHashMap<String, StudentGuardians> guardian = StudentGuardianDB.selectGuardianByStudentID(ssID);
 
                     request.setAttribute("registrationNumber", registrationNumbe);
+                    request.setAttribute("guardian", guardian);
+                    request.setAttribute("studentID", studentIDsss);
                     request.setAttribute("school", school);
                     request.setAttribute("student", stud);
+                    request.setAttribute("studentID", ssID);
                     url = "/Admin/studentProfile.jsp";
 
                     //response.sendRedirect("Private?action=listStudents");

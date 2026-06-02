@@ -6,6 +6,7 @@ package business;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -109,6 +110,19 @@ public class StudentGuardians implements Serializable{
     public LocalDateTime getCreatedAT() {
         return createdAT;
     }
+    
+     public String getFormattedTime() {
+        
+        if(createdAT== null){
+            return "";
+        }
+        
+        LocalDateTime locatTime = createdAT.minusHours(6);
+        
+        DateTimeFormatter formatter
+                = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a");
+        return locatTime.format(formatter);
+    }
 
     public void setCreatedAT(LocalDateTime createdAT) {
         this.createdAT = createdAT;
@@ -116,6 +130,19 @@ public class StudentGuardians implements Serializable{
 
     public LocalDateTime getUpdatedAT() {
         return updatedAT;
+    }
+    
+     public String getUpdatedFormattedTime() {
+        
+        if(updatedAT== null){
+            return "";
+        }
+        
+        LocalDateTime locatTime = updatedAT.minusHours(6);
+        
+        DateTimeFormatter formatter
+                = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a");
+        return locatTime.format(formatter);
     }
 
     public void setUpdatedAT(LocalDateTime updatedAT) {
