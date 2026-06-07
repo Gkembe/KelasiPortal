@@ -4,6 +4,7 @@
  */
 package controllers;
 
+import business.Courses;
 import business.Department;
 import business.Levels;
 import business.School;
@@ -13,7 +14,9 @@ import business.StudentGuardians;
 import business.Students;
 import business.Teachers;
 import business.User;
+import database.CourseDB;
 import database.DepartmentDB;
+import database.LevelCourseDB;
 import database.UserDB;
 import database.LevelDB;
 import database.SchoolDB;
@@ -1210,14 +1213,14 @@ public class Private extends HttpServlet {
                     String guardianIDsssss = request.getParameter("guardianID");
 
                     int convertStudentIDssss = Integer.parseInt(studentIDGuardianssss);
-                    
+
                     int guardiansIDssss = Integer.parseInt(guardianIDsssss);
 
                     StudentGuardianDB.deactiveGuardian(guardiansIDssss, convertStudentIDssss);
-                    
+
                     request.setAttribute("registrationNumber", regisNumbssss);
-                    
-                    response.sendRedirect("Private?action=studentProfile&registrationNumber=" + regisNumbssss+"&studentID="+ convertStudentIDssss + "&guardianID= " + guardianIDsssss );
+
+                    response.sendRedirect("Private?action=studentProfile&registrationNumber=" + regisNumbssss + "&studentID=" + convertStudentIDssss + "&guardianID= " + guardianIDsssss);
                     return;
                 case "addStudent":
 
@@ -2360,6 +2363,184 @@ public class Private extends HttpServlet {
                     url = "/Admin/department.jsp";
                     break;
 
+                case "gotoCourses":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    LinkedHashMap<String, Courses> c = CourseDB.selectCourses(schoolID);
+
+                    request.setAttribute("courses", c);
+
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/courses.jsp";
+
+                    break;
+
+                case "gotoAddCourses":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/addCourses.jsp";
+
+                    break;
+
+                case "addCourses":
+
+                    ArrayList<String> theCourse = new ArrayList<>();
+                    schoolID = loggedInUser.getSchoolID();
+                    boolean isCourse = true;
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    String courseName = request.getParameter("courseName");
+                    String courseCode = request.getParameter("courseCode");
+                    String statusCourse = "ACTIVE";
+
+                    if (courseName == null || courseName.trim().isEmpty()) {
+
+                        theCourse.add("Course Name field cannot be empty.");
+                        isCourse = false;
+
+                    } else if (courseName.length() > 100) {
+
+                        theCourse.add("Course Name cannot contain more than 100 characters.");
+                        isCourse = false;
+                    } else {
+
+                        courseName = courseName.trim();
+                    }
+
+                    if (courseCode == null || courseCode.trim().isEmpty()) {
+
+                        theCourse.add("Course Code field cannot be empty.");
+                        isCourse = false;
+                    } else if (courseCode.length() > 10) {
+
+                        theCourse.add("Course code cannot contain more than 10 characters.");
+                        isCourse = false;
+                    } else {
+
+                        courseCode = courseCode.trim();
+                    }
+
+                    if (!isCourse) {
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+
+                        request.setAttribute("school", school);
+                        request.setAttribute("ERRORS", theCourse);
+                        url = "/Admin/addCourses.jsp";
+                        break;
+                    }
+
+                    Courses co = new Courses();
+
+                    co.setSchoolID(schoolID);
+                    co.setCourseName(courseName);
+                    co.setCourseCode(courseCode);
+                    co.setStatus(statusCourse);
+
+                    CourseDB.insertCourses(co);
+                    request.setAttribute("school", school);
+                    request.setAttribute("success", "Course added successful!");
+                    url = "/Admin/addCourses.jsp";
+
+                    break;
+
+                case "activateCourse":
+
+                    String courseIDs = request.getParameter("courseID");
+
+                    int courseIds = Integer.parseInt(courseIDs);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    CourseDB.activeCourse(courseIds, schoolID);
+                    request.setAttribute("school", school);
+
+                    response.sendRedirect("Private?action=gotoCourses");
+                    return;
+                case "deactivateCourse":
+
+                    String courseID = request.getParameter("courseID");
+
+                    int courseId = Integer.parseInt(courseID);
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    CourseDB.deactiveCourse(courseId, schoolID);
+                    request.setAttribute("school", school);
+
+                    response.sendRedirect("Private?action=gotoCourses");
+                    return;
+
+                case "gotoAddLevelCourses":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    String levelId = request.getParameter("levelID");
+
+                    int levelIds = Integer.parseInt(levelId);
+
+                    LinkedHashMap<String, Courses> cou = CourseDB.selectCourses(schoolID);
+
+                    request.setAttribute("courses", cou);
+                    request.setAttribute("school", school);
+                    request.setAttribute("levelID", levelIds);
+
+                    url = "/Admin/addLevelCourse.jsp";
+
+                    break;
+                case "addLevelCourses":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    int levelIDs = Integer.parseInt(request.getParameter("levelID"));
+                    String[] courseIDss = request.getParameterValues("courseID");
+
+                    if (courseIDss != null) {
+                        for (int i = 0; i < courseIDss.length; i++) {
+                            int courseIDsss = Integer.parseInt(courseIDss[i]);
+                            LevelCourseDB.insertLevelCourse(levelIDs, courseIDsss);
+                        }
+                    }
+
+                    request.setAttribute("success", "Course added to the Level successful!");
+                    response.sendRedirect(request.getContextPath() + "/Private?action=gotoAddLevelCourses&levelID=" + levelIDs);
+                    return;
+
+                case "viewLevelCourses":
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    String levelIdss = request.getParameter("levelID");
+
+                    if (levelIdss == null || levelIdss.equals("")) {
+                        response.sendRedirect(request.getContextPath() + "/Private?action=gotoLevels");
+                        return;
+                    }
+
+                    int levelID = Integer.parseInt(levelIdss);
+
+                    LinkedHashMap<String, Courses> courses = LevelCourseDB.selectCoursesByLevel(levelID);
+
+                    request.setAttribute("school", school);
+                    request.setAttribute("courses", courses);
+                    request.setAttribute("levelID", levelID);
+
+                    url = "/Admin/levelCourses.jsp";
+
+                    break;
                 default:
                     url = "/index.jsp";
                     break;

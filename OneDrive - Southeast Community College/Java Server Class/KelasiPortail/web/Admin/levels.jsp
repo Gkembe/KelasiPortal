@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        
+
     </head>
     <body>
 
@@ -42,6 +42,7 @@
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList"><i class="fas fa-layer-group"></i> Levels</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList"><i class="fas fa-th-large"></i> Section</a>
 
+                <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoCourses"><i class="fa-solid fa-book-open"></i>  Courses</a>
                 <a class="nav-link logout" href="${pageContext.request.contextPath}/Public?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
 
@@ -94,6 +95,7 @@
 
                                     <th>Inactive</th>
                                     <th>Active</th>
+                                    <th>Details</th>
 
 
                                 </tr>
@@ -114,7 +116,7 @@
                                         <c:forEach var="l" items="${levels.values()}">
                                             <tr>
 
-                                                <td>${l.levelName}</td>
+                                                <td><a href="${pageContext.request.contextPath}/Private?action=gotoAddLevelCourses&levelID=${l.levelID}">${l.levelName}</a></td>
                                                 <td>${l.levelCode}</td>
 
                                                 <td>${l.status}</td>
@@ -129,7 +131,9 @@
                                                        onclick="return confirm('Are you sure you want to active this level?')"
                                                        >ACTIVATE</a></td>
 
-
+                                                <td><a href="${pageContext.request.contextPath}/Private?action=viewLevelCourses&levelID=${l.levelID}">
+                                                        View Details
+                                                    </a></td>
 
                                             </tr>
                                         </c:forEach>

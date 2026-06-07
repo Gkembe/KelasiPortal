@@ -1,6 +1,6 @@
 <%-- 
-    Document   : addUsers
-    Created on : Dec 30, 2025, 9:26:56 PM
+    Document   : addCourses
+    Created on : Jun 2, 2026, 1:24:21 PM
     Author     : kembe
 --%>
 
@@ -33,7 +33,7 @@
                     </c:choose>
                 </div>
 
-               <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile"><i class="fas fa-chart-line"></i> Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile"><i class="fas fa-school"></i> School Profile</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers"><i class="fas fa-user-shield"></i> Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
@@ -50,58 +50,49 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Add Student</h1>
-                        <div class="subtext">Fill Administrator information</div>
+                        <h1>Add School Course</h1>
+                        <div class="subtext">Fill Course information</div>
                     </div>
                 </div>
 
                 <div class="section">
                     <div class="section-header">
-                        <h2>Administrator Information</h2>
+                        <h2>Course Information</h2>
                     </div>
                     <ul style="color: red">
 
-                        <c:forEach var="b" items="${badMessage}">
+                        <c:forEach var="e" items="${ERRORS}">
 
 
-                            <li>${b}</li>
+                            <li>${e}</li>
                             </c:forEach>
 
                     </ul>
-                    <p style="color: green">${message}</p>
+                    <p style="color: green">${success}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
-                        <input type="hidden" name="action" value="addUsers">
+                        <input type="hidden" name="action" value="addCourses">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
-                        <input type="hidden" name="userID" value="${user.userID}">
+                        
 
                         <div class="form-grid">
 
                             <div class="form-row">
-                                <label for="username">Username ADMIN</label>
-                                <input type="text" class="form-input" name="username" placeholder="Andree"  />
+                                <label for="courseName">Course Name</label>
+                                <input type="text" class="form-input" name="courseName" placeholder="Calculus I"  />
                             </div>
                             <div class="form-row">
-                                <label for="adminemail">Email ADMIN</label>
-                                <input type="email" class="form-input" name="adminemail" placeholder="admin@school.com" />
+                                <label for="courseCode">Courses Code</label>
+                                <input type="text" class="form-input" name="courseCode" placeholder="MATH001" />
                             </div>
-
-                            <div class="form-row">
-                                <label for="adminphone" class="form-label">Phone ADMIN</label>
-                                <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
-                            </div>
-                            <div class="form-row">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                            </div>
-                            <div class="form-row">
-                                <label for="confirm" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                            </div>
+                            
+                            
+                           <input type="hidden" class="form-input" name="status" value="ACTIVE" />
+                            
                         </div>
                         <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Add ADMIN">
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoDepartmentList">Cancel</a>
+                            <input class="btn btn-primary" type="submit" value="Add Course">
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoCourses">Cancel</a>
                         </div>
                     </form>
 
@@ -112,3 +103,4 @@
 
     </body>
 </html>
+

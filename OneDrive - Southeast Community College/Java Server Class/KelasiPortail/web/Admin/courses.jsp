@@ -1,6 +1,6 @@
 <%-- 
-    Document   : Department
-    Created on : Feb 19, 2026, 9:15:37 PM
+    Document   : courses
+    Created on : Jun 2, 2026, 1:08:21 PM
     Author     : kembe
 --%>
 
@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/dashboard.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+        
     </head>
     <body>
 
@@ -52,14 +52,14 @@
 
                 <div class="topbar">
                     <div>
-                        <h1><i class="fas fa-th-large"></i> Section</h1>
+                        <h1><i class="fa-solid fa-book-open"></i> Course</h1>
                         <div class="subtext">Manage accounts for <b>${school.schoolName}</b></div>
                         <div class="searchDiv">
                             <form class="forms" action="Private" method="post">
 
-                                <input type="hidden" name="action" value="searchDepartment">
+                                <input type="hidden" name="action" value="searchStudent">
 
-                                <input class="search" type="search" name="departmentID" placeholder="Search...">
+                                <input class="search" type="search" name="studentID" placeholder="Search...">
 
                                 <input type="submit" value="search ID">
 
@@ -79,8 +79,8 @@
                 <!-- Original -->
                 <div class="section">
                     <div class="section-header">
-                        <h2>Section List</h2>
-                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddDepartment">+ Add Section</a>
+                        <h2>Courses List</h2>
+                        <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddCourses">+ Add Course</a>
                     </div>
 
 
@@ -88,12 +88,12 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Section Name</th>
-                                    
-                                    
+                                    <th>Course Code</th>
+                                    <th>Course Name</th>
+
                                     <th>Status</th>
                                     <th>Created AT</th>
-                                    
+
                                     <th>Inactive</th>
                                     <th>Active</th>
 
@@ -104,31 +104,31 @@
                             <tbody>
                                 <c:choose> 
 
-                                    <c:when test="${empty department}">
+                                    <c:when test="${empty courses}">
 
 
                                         <tr>
-                                            <td colspan="3" class="empty">No level found.</td>
+                                            <td colspan="6" class="empty">No course found.</td>
                                         </tr>
 
                                     </c:when>
                                     <c:otherwise>
-                                        <c:forEach var="d" items="${department.values()}">
+                                        <c:forEach var="c" items="${courses.values()}">
                                             <tr>
-                                                
-                                                <td>${d.departmentName}</td>
-                                                
-                                                
-                                                <td>${d.status}</td>
-                                                <td>${d.getFormattedTime()}</td>
-                                                
+
+                                                <td>${c.courseCode}</td>
+                                                <td>${c.courseName}</td>
+
+                                                <td>${c.status}</td>
+                                                <td>${c.getFormattedTime()}</td>
+
                                                 <td><a class="status-btn disabled" 
-                                                       href="${pageContext.request.contextPath}/Private?action=inactiveSection&departmentID=${d.departmentID}"
-                                                       onclick="return confirm('Are you sure you want to deactive this Section?')"
+                                                       href="${pageContext.request.contextPath}/Private?action=deactivateCourse&courseID=${c.courseID}"
+                                                       onclick="return confirm('Are you sure you want to deactive this course?')"
                                                        >DISABLE</a></td>
                                                 <td><a class="status-btn activate"
-                                                       href="${pageContext.request.contextPath}/Private?action=activeDepartment&departmentID=${d.departmentID}"
-                                                       onclick="return confirm('Are you sure you want to active this Section?')"
+                                                       href="${pageContext.request.contextPath}/Private?action=activateCourse&courseID=${c.courseID}"
+                                                       onclick="return confirm('Are you sure you want to active this course?')"
                                                        >ACTIVATE</a></td>
 
 
@@ -147,3 +147,4 @@
 
     </body>
 </html>
+
