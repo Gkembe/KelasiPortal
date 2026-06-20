@@ -1,1 +1,1 @@
-# Social-Media-Web-Application-Group-Project-Java-Servlet-
+School management system. Helps school manages students, professors, and parents. 
