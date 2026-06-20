@@ -102,7 +102,7 @@ public class Public extends HttpServlet {
                     break;
 
                 case "login": {
-                    //I've given you the start of a login system here
+                    
 
                     String email = request.getParameter("email");
                     String password = request.getParameter("password");
@@ -409,8 +409,8 @@ public class Public extends HttpServlet {
                             for (int i = 0; i < schoolCycle.length; i++) {
 
                                 SchoolCycle cycle = new SchoolCycle();
-                                cycle.setSchoolID(schoolID);            // ✅ FK
-                                cycle.setCycleName(schoolCycle[i]);     // NURSERY/PRIMARY/SECONDARY
+                                cycle.setSchoolID(schoolID);            
+                                cycle.setCycleName(schoolCycle[i]);     
                                 cycle.setStatus("Active");
 
                                 int cycleID = SchoolCycleDB.insertSchoolCycle(conn, cycle);
@@ -435,7 +435,7 @@ public class Public extends HttpServlet {
 
                     } finally {
                         conn.setAutoCommit(true);
-                        conn.close(); // ou pool.freeConnection(conn) selon ton ConnectionPool
+                        conn.close();
                     }
                     break;
                 }
