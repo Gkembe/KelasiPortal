@@ -1,6 +1,6 @@
 <%-- 
-    Document   : addUsers
-    Created on : Dec 30, 2025, 9:26:56 PM
+    Document   : resetTeacherLogin
+    Created on : Jun 9, 2026, 12:18:52 PM
     Author     : kembe
 --%>
 
@@ -20,7 +20,7 @@
 
 
         <div class="layout">
-
+            <!-- SIDEBAR -->
             <div class="sidebar">
                 <div class="brand">
                     <div class="brand-title">KELASI</div>
@@ -33,7 +33,7 @@
                     </c:choose>
                 </div>
 
-               <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/Private?action=gotoProfile"><i class="fas fa-chart-line"></i> Dashboard</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=gotoSchoolProfile"><i class="fas fa-school"></i> School Profile</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listUsers"><i class="fas fa-user-shield"></i> Administrators</a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/Private?action=listTeachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
@@ -50,65 +50,66 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Add Student</h1>
-                        <div class="subtext">Fill Administrator information</div>
+                        <h1>Reset Student</h1>
+                        <div class="subtext">Fill student information</div>
                     </div>
                 </div>
 
                 <div class="section">
                     <div class="section-header">
-                        <h2>Administrator Information</h2>
+                        <h2>Student Information</h2>
                     </div>
                     <ul style="color: red">
 
-                        <c:forEach var="b" items="${badMessage}">
+                        <c:forEach var="e" items="${ERRORS}">
 
 
-                            <li>${b}</li>
+                            <li>${e}</li>
                             </c:forEach>
 
+
                     </ul>
-                    <p style="color: green">${message}</p>
+                    <p style="color: green">${success}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
-                        <input type="hidden" name="action" value="addUsers">
+                        <input type="hidden" name="action" value="resetTeacherLogin">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
-                        <input type="hidden" name="userID" value="${user.userID}">
-
+                        <input type="hidden" name="userID" value="${teacher.userID}">
+                        <input type="hidden" name="teacherID" value="${teacher.teacherID}">
+                        
+                       
+                       
+                       
                         <div class="form-grid">
 
                             <div class="form-row">
-                                <label for="username">Username ADMIN</label>
-                                <input type="text" class="form-input" name="username" placeholder="Andree"  />
-                            </div>
-                            <div class="form-row">
-                                <label for="adminemail">Email ADMIN</label>
-                                <input type="email" class="form-input" name="adminemail" placeholder="admin@school.com" />
+                                <label class="form-label">Phone Number</label>
+                                <input class="form-input" type="text" name="phoneNumber" value="${user.phoneNumber}" >
                             </div>
 
                             <div class="form-row">
-                                <label for="adminphone" class="form-label">Phone ADMIN</label>
-                                <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
+                                <label class="form-label">Email</label>
+                                <input class="form-input" type="text" name="email" value="${user.email}" >
+                            </div>
+
+                            <div class="form-row">
+                                <label class="form-label">New Password</label>
+                                <input class="form-input" type="text" name="password">
                             </div>
                             <div class="form-row">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                            </div>
-                            <div class="form-row">
-                                <label for="confirm" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
+                                <label class="form-label">Confirm Password</label>
+                                <input class="form-input" type="text" name="confirmPassword">
                             </div>
                         </div>
-                        <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Add ADMIN">
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=listUsers">Cancel</a>
+                            
+                            <div class="actions">
+                            <input class="btn btn-primary" type="submit" value="Add Student">
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=teacherProfile&&teacherID=${teacher.teacherID}&userID=${teacher.userID}">Cancel</a>
                         </div>
+                            
                     </form>
-
                 </div>
             </div>
         </div>
-
-
     </body>
 </html>

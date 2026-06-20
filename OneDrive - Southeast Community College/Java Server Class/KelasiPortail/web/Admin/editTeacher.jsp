@@ -1,6 +1,6 @@
 <%-- 
-    Document   : teachers
-    Created on : Dec 18, 2025, 1:09:32 PM
+    Document   : editTeacher
+    Created on : Jun 8, 2026, 11:47:11 AM
     Author     : kembe
 --%>
 
@@ -50,7 +50,7 @@
 
                 <div class="topbar">
                     <div>
-                        <h1>Add Teacher</h1>
+                        <h1>Edit Teacher</h1>
                         <div class="subtext">Fill teacher information</div>
                     </div>
                 </div>
@@ -75,28 +75,29 @@
                     <p>${message}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
-                        <input type="hidden" name="action" value="addTeacher">
+                        <input type="hidden" name="action" value="editTeacher">
                         <input type="hidden" name="schoolID" value="${school.schoolID}">
                         <input type="hidden" name="userID" value="${user.userID}">
+                        <input type="hidden" name="teacherID" value="${teacher.teacherID}">
 
                         <div class="form-grid">
                             <div class="form-row">
                                 <label class="form-label">First Name</label>
-                                <input class="form-input" type="text" name="firstName" placeholder="John" >
+                                <input class="form-input" type="text" name="firstName" value="${teacher.firstName}" placeholder="John" >
                             </div>
 
                             <div class="form-row">
                                 <label class="form-label">Middle Name</label>
-                                <input class="form-input" type="text" name="middleName" placeholder="Doe" >
+                                <input class="form-input" type="text" name="middleName" value="${teacher.middleName}" placeholder="Doe" >
                             </div>
                             <div class="form-row">
                                 <label class="form-label">Last Name</label>
-                                <input class="form-input" type="text" name="lastName" placeholder="Doe" >
+                                <input class="form-input" type="text" name="lastName" value="${teacher.lastName}" placeholder="Doe" >
                             </div>
                             
                             <div class="form-row">
                                 <label class="form-label">Gender</label>
-                                <select class="form-input" name="gender" required>
+                                <select class="form-input" name="gender" value="${teacher.gender}" required>
                                     <option value="MALE">MALE</option>
                                     <option value="FEMALE">FEMALE</option>
                                     <option value="OTHER">OTHER</option>
@@ -105,81 +106,59 @@
                             
                             <div class="form-row">
                                 <label class="form-label">Birth Date</label>
-                                <input class="form-input" type="date" name="birthDate">
+                                <input class="form-input" type="date" name="birthDate" value="${teacher.dateOfBirth}">
                             </div>
 
                             <div class="form-row">
                                 <label class="form-label">Phone Number</label>
-                                <input class="form-input" type="text" name="phoneNumber" placeholder="+14024307272">
+                                <input class="form-input" type="text" name="phoneNumber" value="${teacher.phoneNumber}" placeholder="+14024307272">
                             </div>
 
                             <div class="form-row">
                                 <label class="form-label">Office Location</label>
-                                <input class="form-input" type="text" name="officeLocation" placeholder="Room 203">
+                                <input class="form-input" type="text" name="officeLocation" value="${teacher.officeLocation}" placeholder="Room 203">
                             </div>
                             
                              <div class="form-row">
                                 <label class="form-label">Home Address</label>
-                                <input class="form-input" type="text" name="address" placeholder="6758 D street APT 3">
+                                <input class="form-input" type="text" name="address" value="${teacher.address}" placeholder="6758 D street APT 3">
                             </div>
                             
                              
 
                             <div class="form-row">
-                                <label class="form-label">Specialty</label>
-                                <input class="form-input" type="text" name="specification" placeholder="Mathematics / Computer Science">
+                                <label class="form-label">Subject</label>
+                                <input class="form-input" type="text" name="specification" value="${teacher.subject}" placeholder="Mathematics / Computer Science">
                             </div>
 
                            
                             
                             <div class="form-row">
                                 <label class="form-label">Qualification</label>
-                                <input class="form-input" type="text" name="qualification" placeholder="BS Computer Sceience">
+                                <input class="form-input" type="text" name="qualification" value="${teacher.qualification}" placeholder="BS Computer Sceience">
                             </div>
 
                             <div class="form-row">
                                 <label class="form-label">Hire Date</label>
-                                <input class="form-input" type="date" name="hireDate">
+                                <input class="form-input" type="date" name="hireDate" value="${teacher.hireDate}">
                             </div>
+
+                            
+                           
 
                             <div class="form-row">
-                                <label class="form-label">Status</label>
-                                <select class="form-input" name="status" required>
-                                    <option value="ACTIVE">ACTIVE</option>
-                                    <option value="INACTIVE">INACTIVE</option>
-                                </select>
-                            </div>
-                            <div class="form-row">
-                                <label for="username">Username ADMIN</label>
-                                <input type="text" class="form-input" name="username" placeholder="Andree"  />
+                                <label for="adminemail">Email</label>
+                                <input type="email" class="form-input" name="adminemail" value="${teacher.email}" placeholder="admin@school.com" />
                             </div>
 
+                            
 
-                            <div class="form-row">
-                                <label for="adminemail">Email ADMIN</label>
-                                <input type="email" class="form-input" name="adminemail" placeholder="admin@school.com" />
-                            </div>
-
-                            <div class="form-row">
-                                <label for="adminphone" class="form-label">Phone ADMIN</label>
-                                <input type="text" class="form-input" name="adminphone" placeholder="+14024307272"  />
-                            </div>
-
-
-                            <div class="form-row">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-input" name="password" placeholder="At least 6 characters"  minlength="6" />
-                            </div>
-                            <div class="form-row">
-                                <label for="confirm" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-input" name="confirmpassword" placeholder="Re-type password"  minlength="6" />
-                            </div>
-
+                            
                         </div>
 
                         <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Add Teacher">
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=listTeachers">Cancel</a>
+                            <input class="btn btn-primary" type="submit" value="Save">
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=teacherProfile&teacherID=${teacher.teacherID}">Cancel</a>
                         </div>
                     </form>
 

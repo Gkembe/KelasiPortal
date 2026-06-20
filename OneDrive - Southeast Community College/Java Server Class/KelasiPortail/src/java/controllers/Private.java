@@ -151,9 +151,14 @@ public class Private extends HttpServlet {
                     boolean isValid = true;
                     // TEACHER 
                     String firstName = request.getParameter("firstName");
+                    String middleName = request.getParameter("middleName");
                     String lastName = request.getParameter("lastName");
+                    String theGender = request.getParameter("gender");
+                    String theBirthDate = request.getParameter("birthDate");
                     String phoneNumber = request.getParameter("phoneNumber");
                     String officeLocation = request.getParameter("officeLocation");
+                    String theHomeAddress = request.getParameter("address");
+                    //String teacherEmail = request.getParameter("email");
                     String specification = request.getParameter("specification");
                     String hireDates = request.getParameter("hireDate");
                     String isActive = request.getParameter("status");
@@ -178,6 +183,15 @@ public class Private extends HttpServlet {
                         firstName = firstName.trim();
                     }
 
+                    if (middleName.length() > 50) {
+
+                        errors.add("Middle Name must be between 1 and 50 characters.");
+                        isValid = false;
+                    } else {
+
+                        middleName = middleName.trim();
+                    }
+
                     if (lastName == null || lastName.trim().length() <= 0 || lastName.trim().length() > 50 || lastName.trim().isEmpty()) {
                         errors.add("Short Name must be 1-50 characters.");
                         isValid = false;
@@ -186,14 +200,47 @@ public class Private extends HttpServlet {
 
                     }
 
-                    if (officeLocation == null || officeLocation.isEmpty()) {
+                    if (officeLocation == null || officeLocation.isEmpty() || officeLocation.length() > 20) {
 
-                        errors.add("office number cannot be empty.");
+                        errors.add("office number cannot be empty and more then 20 characters.");
 
                         isValid = false;
                     } else {
 
                         officeLocation = officeLocation.trim();
+                    }
+
+                    if (theHomeAddress == null || theHomeAddress.isEmpty() || theHomeAddress.length() > 100) {
+
+                        errors.add("Home address cannot be empty and more than 100 characters.");
+
+                        isValid = false;
+                    } else {
+
+                        theHomeAddress = theHomeAddress.trim();
+                    }
+
+                    if (theGender == null || theGender.isEmpty()) {
+
+                        errors.add("The Gender cannot be empty.");
+                        isValid = false;
+                    } else if (!theGender.equals("MALE") && !theGender.equals("FEMELE") && !theGender.equals("OTHER")) {
+
+                        errors.add("ERROR, You must select Male, female or other.");
+                        isValid = false;
+
+                    } else {
+
+                        theGender = theGender.trim();
+                    }
+
+                    if (theBirthDate == null || theBirthDate.isEmpty()) {
+
+                        errors.add("ERROR, birth Date cannot be empty.");
+                        isValid = false;
+                    } else {
+
+                        theBirthDate = theBirthDate.trim();
                     }
 
                     if (specification == null || specification.isEmpty()) {
@@ -255,6 +302,10 @@ public class Private extends HttpServlet {
                         if (UserDB.adminEmailExists(adminEmail)) {
                             errors.add("Admin email already exists.");
                             isValid = false;
+                        } else if (!adminEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+
+                            errors.add("Admin email must be in standard form. ex: gedeon@gmail.com");
+                            isValid = false;
                         }
                     }
 
@@ -315,14 +366,21 @@ public class Private extends HttpServlet {
 
                     Teachers teacher = new Teachers();
                     teacher.setFirstName(firstName);
+                    teacher.setMiddleName(middleName);
                     teacher.setLastName(lastName);
+                    teacher.setGender(theGender);
                     teacher.setSubject(specification);
                     teacher.setQualification(qualification);
                     teacher.setPhoneNumber(phoneNumber);
                     teacher.setOfficeLocation(officeLocation);
+                    teacher.setAddress(theHomeAddress);
+                    teacher.setEmail(adminEmail);
                     teacher.setHireDate(hireDate);
                     teacher.setIsActive(isActive);
                     teacher.setSchoolID(schoolID);
+
+                    LocalDate birth = LocalDate.parse(theBirthDate);
+                    teacher.setDateOfBirth(birth);
 
                     // Hash password
                     String hash = null;
@@ -375,6 +433,375 @@ public class Private extends HttpServlet {
 
                     url = "/Admin/allTeachers.jsp";
 
+                    break;
+
+                case "teacherProfile":
+
+                    int teacherIds = Integer.parseInt(request.getParameter("teacherID"));
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    Teachers t = TeacherDB.getTeacherForProfileByID(teacherIds, schoolID);
+
+                    request.setAttribute("teacher", t);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/teacherProfile.jsp";
+                    break;
+
+                case "gotoEditTeacherProfile":
+
+                    int teacherIDSs = Integer.parseInt(request.getParameter("teacherID"));
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+
+                    Teachers teach = TeacherDB.getTeacherForProfileByID(teacherIDSs, schoolID);
+
+                    request.setAttribute("teacher", teach);
+                    request.setAttribute("school", school);
+
+                    url = "/Admin/editTeacher.jsp";
+
+                    break;
+
+                case "editTeacher":
+
+                    boolean isTeacher = true;
+                    ArrayList<String> tError = new ArrayList<>();
+                    // TEACHER 
+                    int theTeacherID = Integer.parseInt(request.getParameter("teacherID"));
+                    String tFirstName = request.getParameter("firstName");
+                    String tMiddleName = request.getParameter("middleName");
+                    String tLastName = request.getParameter("lastName");
+                    String tGender = request.getParameter("gender");
+                    String tBirthDate = request.getParameter("birthDate");
+                    String tPhoneNumber = request.getParameter("phoneNumber");
+                    String tOfficeLocation = request.getParameter("officeLocation");
+                    String tHomeAddress = request.getParameter("address");
+                    String tEmail = request.getParameter("adminemail");
+                    String tSpecification = request.getParameter("specification");
+                    String tHireDates = request.getParameter("hireDate");
+                    String tIsActive = request.getParameter("status");
+                    String tQualification = request.getParameter("qualification");
+
+                    LocalDate thireDate = null;
+
+                    //VALIDATION Teacher
+                    if (tFirstName == null || tFirstName.isEmpty() || tFirstName.trim().length() <= 0 || tFirstName.trim().length() > 50) {
+                        tError.add("First Name must be between 1 and 50 characters.");
+                        isTeacher = false;
+                    } else {
+                        tFirstName = tFirstName.trim();
+                    }
+
+                    if (tMiddleName.length() > 50) {
+
+                        tError.add("Middle Name must be between 1 and 50 characters.");
+                        isTeacher = false;
+                    } else {
+
+                        tMiddleName = tMiddleName.trim();
+                    }
+
+                    if (tLastName == null || tLastName.trim().length() <= 0 || tLastName.trim().length() > 50 || tLastName.trim().isEmpty()) {
+                        tError.add("Short Name must be 1-50 characters.");
+                        isTeacher = false;
+                    } else {
+                        tLastName = tLastName.trim();
+
+                    }
+
+                    if (tOfficeLocation == null || tOfficeLocation.isEmpty() || tOfficeLocation.length() > 20) {
+
+                        tError.add("office number cannot be empty and more then 20 characters.");
+
+                        isTeacher = false;
+                    } else {
+
+                        tOfficeLocation = tOfficeLocation.trim();
+                    }
+
+                    if (tHomeAddress == null || tHomeAddress.isEmpty() || tHomeAddress.length() > 100) {
+
+                        tError.add("Home address cannot be empty and more than 100 characters.");
+
+                        isTeacher = false;
+                    } else {
+
+                        tHomeAddress = tHomeAddress.trim();
+                    }
+
+                    if (tGender == null || tGender.isEmpty()) {
+
+                        tError.add("The Gender cannot be empty.");
+                        isTeacher = false;
+                    } else if (!tGender.equals("MALE") && !tGender.equals("FEMELE") && !tGender.equals("OTHER")) {
+
+                        tError.add("ERROR, You must select Male, female or other.");
+                        isTeacher = false;
+
+                    } else {
+
+                        tGender = tGender.trim();
+                    }
+
+                    if (tBirthDate == null || tBirthDate.isEmpty()) {
+
+                        tError.add("ERROR, birth Date cannot be empty.");
+                        isTeacher = false;
+                    } else {
+
+                        tBirthDate = tBirthDate.trim();
+                    }
+
+                    if (tSpecification == null || tSpecification.isEmpty()) {
+
+                        tError.add("Specification cannot be empty.");
+
+                        isTeacher = false;
+                    } else {
+
+                        tSpecification = tSpecification.trim();
+                    }
+
+                    if (tHireDates == null || tHireDates.isEmpty()) {
+
+                        tError.add("Hire Date cannot be empty.");
+
+                        isTeacher = false;
+                    } else {
+
+                        thireDate = LocalDate.parse(tHireDates);
+                    }
+
+                    if (tPhoneNumber == null || tPhoneNumber.isEmpty() || tPhoneNumber.length() > 15) {
+
+                        tError.add("Phone Number cannot be empty or more than 15 characters.");
+                        isTeacher = false;
+
+                    } else {
+
+                        tPhoneNumber = tPhoneNumber.trim();
+                    }
+
+                    if (tEmail == null || tEmail.trim().isEmpty()) {
+                        tError.add("Admin email is required.");
+                        isTeacher = false;
+                    } else {
+                        tEmail = tEmail.trim();
+
+                    }
+                    if (!tEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+
+                        tError.add("Admin email must be in standard form. ex: gedeon@gmail.com");
+                        isTeacher = false;
+                    }
+
+                    // STOP HERE if invalid 
+                    if (!isTeacher) {
+
+                        int teacherIDSss = Integer.parseInt(request.getParameter("teacherID"));
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        Teachers teache = TeacherDB.getTeacherForProfileByID(teacherIDSss, schoolID);
+
+                        request.setAttribute("teacher", teache);
+                        request.setAttribute("school", school);
+                        request.setAttribute("errors", tError);
+                        url = "/Admin/editTeacher.jsp";
+                        break;
+                    }
+
+                    //BUILD OBJECTS
+                    schoolID = loggedInUser.getSchoolID();
+
+                    Teachers te = new Teachers();
+                    te.setFirstName(tFirstName);
+                    te.setMiddleName(tMiddleName);
+                    te.setLastName(tLastName);
+                    te.setGender(tGender);
+                    te.setSubject(tSpecification);
+                    te.setQualification(tQualification);
+                    te.setPhoneNumber(tPhoneNumber);
+                    te.setOfficeLocation(tOfficeLocation);
+                    te.setAddress(tHomeAddress);
+                    te.setEmail(tEmail);
+                    te.setHireDate(thireDate);
+                    te.setIsActive(tIsActive);
+                    te.setSchoolID(schoolID);
+                    te.setTeacherID(theTeacherID);
+
+                    LocalDate births = LocalDate.parse(tBirthDate);
+                    te.setDateOfBirth(births);
+
+                    TeacherDB.updateTeacher(te);
+                    response.sendRedirect("Private?action=teacherProfile&teacherID=" + theTeacherID);
+                    return;
+
+                case "gotoResetTeacherLoginInfo":
+
+                    int teacherIDReset = Integer.parseInt(request.getParameter("teacherID"));
+                    int teacherUserIDs = Integer.parseInt(request.getParameter("userID"));
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    User resetUse = UserDB.resetUser(teacherUserIDs, schoolID);
+
+                    Teachers resetTeache = TeacherDB.getTeacherForProfileByID(teacherIDReset, schoolID);
+
+                    request.setAttribute("teacher", resetTeache);
+
+                    request.setAttribute("user", resetUse);
+                    request.setAttribute("school", school);
+                    url = "/Admin/resetTeacherLogin.jsp";
+
+                    break;
+
+                case "resetTeacherLogin":
+
+                    boolean isReset = true;
+
+                    int teacherIDResetsss = Integer.parseInt(request.getParameter("teacherID"));
+                    int teacherUserID = Integer.parseInt(request.getParameter("userID"));
+
+                    String tenewEmail = request.getParameter("email");
+                    String tePhoneNumber = request.getParameter("phoneNumber");
+                    String teNewPassword = request.getParameter("password");
+                    String teconfirmNewPassword = request.getParameter("confirmPassword");
+
+                    if (tenewEmail == null || tenewEmail.trim().isEmpty()) {
+                        resetError.add("Email is required.");
+                        isReset = false;
+                    } else {
+                        tenewEmail = tenewEmail.trim();
+
+                        String regexEmailUser = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+                        if (!tenewEmail.matches(regexEmailUser)) {
+
+                            resetError.add("Put the valid email address ex. gedeon@gmail.com");
+                            isReset = false;
+
+                        }
+                    }
+
+                    if (tePhoneNumber.length() > 15) {
+
+                        badMessage.add("Phone Number cannot be more then 15 characters.");
+                        isReset = false;
+
+                    } else {
+
+                        tePhoneNumber = tePhoneNumber.trim();
+                        String regexPhones = "^\\+1[0-9]{10}";
+                        if (!tePhoneNumber.matches(regexPhones)) {
+
+                            resetError.add("Put the correct phone number e.g +14004205656.");
+                            isReset = false;
+                        }
+
+                    }
+
+                    // Password validation 
+                    if (teNewPassword == null || teNewPassword.isBlank()) {
+                        resetError.add("Password cannot be empty.");
+                        isReset = false;
+                    } else {
+                        if (teNewPassword.length() < 10) {
+                            resetError.add("Password must be at least 10 characters.");
+                            isReset = false;
+                        }
+                        if (!teNewPassword.matches(".*[A-Z].*")) {
+                            resetError.add("Password must contain at least one uppercase letter.");
+                            isReset = false;
+                        }
+                        if (!teNewPassword.matches(".*[a-z].*")) {
+                            resetError.add("Password must contain at least one lowercase letter.");
+                            isReset = false;
+                        }
+                        if (!teNewPassword.matches(".*[0-9].*")) {
+                            resetError.add("Password must contain at least one number.");
+                            isReset = false;
+                        }
+                        if (!teNewPassword.matches(".*[^a-zA-Z0-9].*")) {
+                            resetError.add("Password must contain at least one special character.");
+                            isReset = false;
+                        }
+                    }
+
+                    if (teconfirmNewPassword == null || !teNewPassword.equals(teconfirmNewPassword)) {
+                        resetError.add("Password must match confirmation password.");
+                        isReset = false;
+                    }
+                    // STOP HERE if invalid 
+                    if (!isReset) {
+
+                        int teacherIDResetss = Integer.parseInt(request.getParameter("teacherID"));
+                        int teacherUserIDss = Integer.parseInt(request.getParameter("userID"));
+
+                        schoolID = loggedInUser.getSchoolID();
+                        school = SchoolDB.getSchoolByID(schoolID);
+                        User teUser = UserDB.resetUser(teacherUserIDss, schoolID);
+
+                        Teachers teachs = TeacherDB.getTeacherForProfileByID(teacherIDResetss, schoolID);
+                        
+                        request.setAttribute("school", school);
+                        request.setAttribute("teacher", teachs);
+                        request.setAttribute("user", teUser);
+                        
+                        request.setAttribute("ERRORS", resetError);
+                        url = "/Admin/resetTeacherLogin.jsp";
+                        break;
+                    }
+
+                    // Hash password
+                    String thashePassword = null;
+
+                    schoolID = loggedInUser.getSchoolID();
+
+                    try {
+                        SecretKeyCredentialHandler ch = new SecretKeyCredentialHandler();
+                        ch.setAlgorithm("PBKDF2WithHmacSHA256");
+                        ch.setKeyLength(256);
+                        ch.setSaltLength(16);
+                        ch.setIterations(4096);
+
+                        thashePassword = ch.mutate(teNewPassword);
+
+                    } catch (Exception e) {
+
+                        resetError.add("Password encryption failed.");
+                        request.setAttribute("ERRORS", resetError);
+                        url = "/Admin/resetTeacherLogin.jsp";
+                        break;
+                    }
+
+                    User resUser = new User();
+
+                    schoolID = loggedInUser.getSchoolID();
+                    school = SchoolDB.getSchoolByID(schoolID);
+                    User theUser = UserDB.resetUser(teacherUserID, schoolID);
+
+                    resUser.setEmail(tenewEmail);
+                    resUser.setPhoneNumber(tePhoneNumber);
+                    resUser.setPassword(thashePassword);
+                    resUser.setUserID(teacherUserID);
+                    resUser.setSchoolID(schoolID);
+
+                    UserDB.updateUserInfo(resUser);
+
+                    Teachers teachss = TeacherDB.getTeacherForProfileByID(teacherIDResetsss, schoolID);
+                    
+                    
+                    request.setAttribute("teacher", teachss);
+                    
+                    request.setAttribute("success", "Updated successful!");
+                    request.setAttribute("user", theUser);
+                    request.setAttribute("school", school);
+                    url = "/Admin/resetTeacherLogin.jsp";
                     break;
 
                 case "gotoChooseSection":
@@ -641,7 +1068,7 @@ public class Private extends HttpServlet {
 
                     schoolID = loggedInUser.getSchoolID();
                     school = SchoolDB.getSchoolByID(schoolID);
-                    User use = StudentDB.selectStudentUser(IDUser, schoolID);
+                    User use = UserDB.resetUser(IDUser, schoolID);
 
                     Students studentReset = StudentDB.getStudentForProfileByID(registraNumber, schoolID);
                     request.setAttribute("registrationNumber", registraNumber);
@@ -656,7 +1083,7 @@ public class Private extends HttpServlet {
 
                 case "resetStudentInfo":
 
-                    boolean isReset = true;
+                    boolean isResets = true;
                     String registratNumber = request.getParameter("registrationNumber");
                     String IdStudent = request.getParameter("studentID");
                     String userIds = request.getParameter("userID");
@@ -671,20 +1098,16 @@ public class Private extends HttpServlet {
 
                     if (newEmail == null || newEmail.trim().isEmpty()) {
                         resetError.add("Email is required.");
-                        isReset = false;
+                        isResets = false;
                     } else {
                         newEmail = newEmail.trim();
-//                        if (UserDB.adminEmailExists(newEmail)) {
-//                            resetError.add("Email already exists.");
-//                            isReset = false;
-//                        }
 
                         String regexEmailUser = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
                         if (!newEmail.matches(regexEmailUser)) {
 
                             resetError.add("Put the valid email address ex. gedeon@gmail.com");
-                            isReset = false;
+                            isResets = false;
 
                         }
                     }
@@ -692,7 +1115,7 @@ public class Private extends HttpServlet {
                     if (sPhoneNumber.length() > 15) {
 
                         badMessage.add("Phone Number cannot be more then 15 characters.");
-                        isReset = false;
+                        isResets = false;
 
                     } else {
 
@@ -701,7 +1124,7 @@ public class Private extends HttpServlet {
                         if (!sPhoneNumber.matches(regexPhones)) {
 
                             resetError.add("Put the correct phone number e.g +14004205656.");
-                            isReset = false;
+                            isResets = false;
                         }
 
                     }
@@ -709,36 +1132,36 @@ public class Private extends HttpServlet {
                     // Password validation 
                     if (NewPassword == null || NewPassword.isBlank()) {
                         resetError.add("Password cannot be empty.");
-                        isReset = false;
+                        isResets = false;
                     } else {
                         if (NewPassword.length() < 10) {
                             resetError.add("Password must be at least 10 characters.");
-                            isReset = false;
+                            isResets = false;
                         }
                         if (!NewPassword.matches(".*[A-Z].*")) {
                             resetError.add("Password must contain at least one uppercase letter.");
-                            isReset = false;
+                            isResets = false;
                         }
                         if (!NewPassword.matches(".*[a-z].*")) {
                             resetError.add("Password must contain at least one lowercase letter.");
-                            isReset = false;
+                            isResets = false;
                         }
                         if (!NewPassword.matches(".*[0-9].*")) {
                             resetError.add("Password must contain at least one number.");
-                            isReset = false;
+                            isResets = false;
                         }
                         if (!NewPassword.matches(".*[^a-zA-Z0-9].*")) {
                             resetError.add("Password must contain at least one special character.");
-                            isReset = false;
+                            isResets = false;
                         }
                     }
 
                     if (confirmNewPassword == null || !NewPassword.equals(confirmNewPassword)) {
                         resetError.add("Password must match confirmation password.");
-                        isReset = false;
+                        isResets = false;
                     }
                     // STOP HERE if invalid 
-                    if (!isReset) {
+                    if (!isResets) {
 
                         String registratiNumber = request.getParameter("registrationNumber");
                         String IdStudents = request.getParameter("studentID");
@@ -749,14 +1172,14 @@ public class Private extends HttpServlet {
 
                         schoolID = loggedInUser.getSchoolID();
                         school = SchoolDB.getSchoolByID(schoolID);
-                        User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
+                        User theUsers = UserDB.resetUser(IdUser, schoolID);
 
                         Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
                         request.setAttribute("registrationNumber", registratiNumber);
                         request.setAttribute("studentID", IDStudentParses);
                         request.setAttribute("school", school);
                         request.setAttribute("student", studentResets);
-                        request.setAttribute("user", theUser);
+                        request.setAttribute("user", theUsers);
                         request.setAttribute("userID", IDUsers);
                         request.setAttribute("ERRORS", resetError);
                         url = "/Admin/resetStudentInfo.jsp";
@@ -789,7 +1212,7 @@ public class Private extends HttpServlet {
 
                     schoolID = loggedInUser.getSchoolID();
                     school = SchoolDB.getSchoolByID(schoolID);
-                    User theUser = StudentDB.selectStudentUser(IdUser, schoolID);
+                    User theUsers = UserDB.resetUser(IdUser, schoolID);
 
                     userss.setEmail(newEmail);
                     userss.setPhoneNumber(sPhoneNumber);
@@ -797,7 +1220,7 @@ public class Private extends HttpServlet {
                     userss.setUserID(IdUser);
                     userss.setSchoolID(schoolID);
 
-                    StudentDB.updateStudentUserInfo(userss);
+                    UserDB.updateUserInfo(userss);
 
                     Students studentResets = StudentDB.getStudentForProfileByID(registratNumber, schoolID);
                     request.setAttribute("registrationNumber", registratNumber);
@@ -805,7 +1228,7 @@ public class Private extends HttpServlet {
                     request.setAttribute("student", studentResets);
                     request.setAttribute("userID", IdUser);
                     request.setAttribute("success", "Updated successful!");
-                    request.setAttribute("user", theUser);
+                    request.setAttribute("user", theUsers);
                     request.setAttribute("school", school);
                     url = "/Admin/resetStudentInfo.jsp";
                     break;

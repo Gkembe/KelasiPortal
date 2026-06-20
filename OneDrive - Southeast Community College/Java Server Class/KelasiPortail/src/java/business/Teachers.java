@@ -17,8 +17,8 @@ public class Teachers implements Serializable{
     
     
     private int teacherID, userID;
-    private String firstName, lastName, subject, qualification, phoneNumber, officeLocation, isActive;
-    private LocalDate hireDate;
+    private String firstName, middleName, lastName, gender, subject, qualification, phoneNumber, officeLocation, address, email, isActive;
+    private LocalDate hireDate, dateOfBirth;
     private LocalDateTime createdAT;
     private int schoolID;
     
@@ -26,19 +26,25 @@ public class Teachers implements Serializable{
     
     public Teachers(){}
 
-    public Teachers(int teacherID, int userID, String firstName, String lastName, String subject, String qualification, String phoneNumber, String officeLocation, String isActive, LocalDate hireDate, LocalDateTime createdAT, int schoolID) {
+    public Teachers(int teacherID, int userID, String firstName, String middleName, String lastName, String gender, String subject, String qualification, String phoneNumber, String officeLocation, String address, String email, String isActive, LocalDate hireDate, LocalDateTime createdAT, int schoolID, LocalDate dateOfBirth) {
         this.teacherID = teacherID;
         this.userID = userID;
         this.firstName = firstName;
+        this.middleName = middleName;
         this.lastName = lastName;
+        this.gender = gender;
         this.subject = subject;
         this.qualification = qualification;
         this.phoneNumber = phoneNumber;
         this.officeLocation = officeLocation;
+        this.address = address;
+        
+        this.email = email;
         this.isActive = isActive;
         this.hireDate = hireDate;
         this.createdAT = createdAT;
         this.schoolID = schoolID;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public Teachers(String firstName, String lastName, String subject, String qualification, String phoneNumber, String officeLocation, String isActive, LocalDate hireDate) {
@@ -82,6 +88,39 @@ public class Teachers implements Serializable{
         return lastName;
     }
 
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -160,6 +199,14 @@ public class Teachers implements Serializable{
 
     public void setSchoolID(int schoolID) {
         this.schoolID = schoolID;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
     
     

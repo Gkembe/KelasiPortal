@@ -440,6 +440,84 @@ public class UserDB {
 
     }
 
+    public static User resetUser(int userID, int schoolID) throws NamingException, SQLException {
+
+        
+        ConnectionPool pool = ConnectionPool.getInstance();
+
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        User user = null;
+
+        connection = pool.getConnection();
+
+        String query = "SELECT username, email, phone FROM users WHERE id = ? AND schoolID = ?";
+
+        ps = connection.prepareStatement(query);
+        ps.setInt(1, userID);
+        ps.setInt(2, schoolID);
+
+        rs = ps.executeQuery();
+
+        
+        if (rs.next()) {
+
+            user = new User();
+            
+            user.setEmail(rs.getString("email"));
+            user.setUserName(rs.getString("username"));
+            user.setPhoneNumber(rs.getString("phone"));
+            
+            
+            
+            
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return user;
+
+    }
     
+    public static int updateUserInfo(User u) throws SQLException, NamingException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+
+        String sql = "UPDATE users "
+                + "SET phone = ?, email = ?, password = ? "
+                
+                + "WHERE id = ? AND schoolID = ? AND role = 'STUDENT'";
+
+        try {
+            ps = connection.prepareStatement(sql);
+
+            ps.setString(1, u.getPhoneNumber());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getPassword());
+            ps.setInt(4, u.getUserID());
+            ps.setInt(5, u.getSchoolID());
+           
+            
+            int rows  = ps.executeUpdate();
+
+           
+            return rows;
+
+            
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            pool.freeConnection(connection);
+        }
+    }
+    
+
 
 }

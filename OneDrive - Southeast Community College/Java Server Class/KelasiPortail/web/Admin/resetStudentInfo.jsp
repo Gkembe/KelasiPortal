@@ -72,7 +72,7 @@
 
 
                     </ul>
-                    <p>${success}</p>
+                    <p style="color: green">${success}</p>
 
                     <form class="form" action="${pageContext.request.contextPath}/Private" method="post">
                         <input type="hidden" name="action" value="resetStudentInfo">

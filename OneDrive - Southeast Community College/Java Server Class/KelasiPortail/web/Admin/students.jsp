@@ -88,9 +88,8 @@
                             <thead>
                                 <tr>
                                     <th>Student ID</th>
-                                    <th>First Name</th>
-                                    <th>Middle Name</th>
-                                    <th>Last Name</th>
+                                    <th>Full Name</th>
+                                    
                                     
                                     
                                     
@@ -98,7 +97,7 @@
                                     
                                     <th>Inactive</th>
                                     <th>Active</th>
-                                    <th>Profile</th>
+                                    
 
 
                                 </tr>
@@ -119,9 +118,11 @@
                                         <c:forEach var="s" items="${student.values()}">
                                             <tr>
                                                 <td>${s.registrationNumber}</td>
-                                                <td>${s.firstName}</td>
-                                                <td>${s.middleName}</td>
-                                                <td>${s.lastName}</td>
+                                                <td><a 
+                                                       href="${pageContext.request.contextPath}/Private?action=studentProfile&registrationNumber=${s.registrationNumber}&studentID=${s.studentID}"
+
+                                                       >${s.firstName} ${s.middleName} ${s.lastName}</a></td>
+                                                
                                                 
 
                                                 
@@ -138,10 +139,7 @@
                                                        onclick="return confirm('Are you sure you want to active this student?')"
                                                        >ACTIVATE</a></td>
 
-                                                <td><a class="status-btn activate"
-                                                       href="${pageContext.request.contextPath}/Private?action=studentProfile&registrationNumber=${s.registrationNumber}&studentID=${s.studentID}"
-
-                                                       >Profile </a></td>
+                                                
 
 
 

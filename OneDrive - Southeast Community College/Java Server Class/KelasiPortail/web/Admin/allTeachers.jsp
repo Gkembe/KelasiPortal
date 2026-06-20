@@ -78,18 +78,17 @@
 
 
                     <div class="table-wraper">
-                        <table class="table" id="tab">
+                        <table class="table">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Subject</th>
-                                    <th>Qualification</th>
-                                    <th>Phone Number</th>
-                                    <th>Office Location</th>
+                                    <th>Full Name</th>
+                                    
+                                    
+                                    
+                                    
                                     <th>Status</th>
-                                    <th>Hire Date</th>
-                                    <th>Created Date</th>
+                                    
+                                    
                                     <th>Inactive</th>
                                     <th>Active</th>
 
@@ -104,23 +103,23 @@
 
 
                                         <tr>
-                                            <td colspan="9" class="empty">No teacher found.</td>
+                                            <td colspan="4" class="empty">No teacher found.</td>
                                         </tr>
 
                                     </c:when>
                                     <c:otherwise>
                                         <c:forEach var="t" items="${teachers.values()}">
                                             <tr>
-                                                <td>${t.firstName}</td>
-                                                <td>${t.lastName}</td>
-                                                <td>${t.subject}</td>
-                                                <td>${t.qualification}</td>
-                                                <td>${t.phoneNumber}</td>
-                                                <td>${t.officeLocation}</td>
-                                                <td>${t.isActive}</td>
-                                                <td>${t.hireDate}</td>
+                                                <td><a 
+                                                       href="${pageContext.request.contextPath}/Private?action=teacherProfile&teacherID=${t.teacherID}"
 
-                                                <td>${t.getFormattedTime()}</td>
+                                                       >${t.firstName} ${t.middleName} ${t.lastName}</a></td>
+                                                
+                                                
+                                                
+                                                
+                                                <td>${t.isActive}</td>
+                                                
                                                 <td>
                                                     <a class="status-btn disabled"
                                                        href="${pageContext.request.contextPath}/Private?action=inactiveTeacher&teacherID=${t.teacherID}"

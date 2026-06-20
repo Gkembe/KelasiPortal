@@ -103,7 +103,7 @@
                         </div>
                         <div class="actions">
                             <input class="btn btn-primary" type="submit" value="Add Level">
-                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoProfile">Cancel</a>
+                            <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoLevelsList">Cancel</a>
                         </div>
                     </form>
 
