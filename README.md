@@ -1,1 +1,1 @@
-School management system. Helps school manages students, professors, and parents. 
+# Social-Media-Web-Application-Group-Project-Java-Servlet-
