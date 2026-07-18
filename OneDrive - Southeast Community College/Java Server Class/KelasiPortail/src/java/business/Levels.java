@@ -20,6 +20,8 @@ public class Levels implements Serializable{
     private String levelName, levelCode;
     private LocalDateTime createdAT;
     private String status;
+    private String departmentName;
+   
 
     public Levels() {
     }
@@ -108,6 +110,14 @@ public class Levels implements Serializable{
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
     
     

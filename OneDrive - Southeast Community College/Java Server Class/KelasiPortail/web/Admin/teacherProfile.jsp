@@ -16,8 +16,10 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/buttonAndForm.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    </head>
 
+        
+
+    </head>
     <body>
 
         <div class="layout">
@@ -121,19 +123,71 @@
                     <div class="section">
                         <h2>Quick Actions</h2>
                         <div class="actions">
-                            <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=gotoAddStudentGuardian&teacherID=${teacher.teacherID}&userID=${teacher.userID}">+ Attribute Courses</a>
+                            <a class="btn btn-primary" href="${pageContext.request.contextPath}/Private?action=chooseLevelsForCourse&teacherID=${teacher.teacherID}">+ Attribute Courses</a>
                             <a class="btn" href="${pageContext.request.contextPath}/Private?action=gotoResetTeacherLoginInfo&teacherID=${teacher.teacherID}&userID=${teacher.userID}">Reset login</a>
                         </div>
 
                     </div>
-                        
-                        
-                        
-                        
-                        
+                    <div class="table-wraper">
+
+                        <h2>Courses</h2>
+                        <c:if test="${empty teacherCourses}">
+                            <p>No courses assigned to this teacher.</p>
+                        </c:if>
+
+                        <c:if test="${not empty teacherCourses}">
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Level</th>
+                                        <th>Course</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <c:forEach var="assignment" items="${teacherCourses}">
+
+                                   
+
+                                    <tr>
+                                        <td>
+                                            ${assignment.departmentName}
+                                        </td>
+
+                                        <td>
+                                            ${assignment.levelName}
+                                        </td>
+
+                                        <td>
+                                            ${assignment.courseName}
+                                        </td>
+
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/Private?action=removeTeacherCourse&assignmentID=${assignment.assignmentID}&teacherID=${teacher.teacherID}" 
+                                               onclick=" return confirm(Are you sure you want to remove this class?)">
+                                                Remove
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                </c:forEach>
+                                </tbody>
+                            </table>
+
+                        </c:if>
+                            
+                            
+                    </div>
+
+
+
                 </div>
             </div>
 
+           
 
     </body>
 </html>

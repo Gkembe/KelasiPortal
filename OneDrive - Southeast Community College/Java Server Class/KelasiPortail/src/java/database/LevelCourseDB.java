@@ -84,4 +84,46 @@ public class LevelCourseDB {
 
         return courses;
     }
+
+    public static LinkedHashMap<String, Courses> getCoursesByLevelID(int levelID)
+            throws NamingException, SQLException {
+
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+
+        String query
+                = "SELECT c.courseID, c.courseName "
+                + "FROM levelCourse lc "
+                + "INNER JOIN courses c "
+                + "ON lc.courseID = c.courseID "
+                + "WHERE lc.levelID = ? "
+                
+                + "AND c.status = 'ACTIVE' "
+                + "ORDER BY c.courseName";
+
+        PreparedStatement ps = connection.prepareStatement(query);
+
+        ps.setInt(1, levelID);
+
+        ResultSet rs = ps.executeQuery();
+
+        LinkedHashMap<String, Courses> courses
+                = new LinkedHashMap<String, Courses>();
+
+        while (rs.next()) {
+
+            Courses course = new Courses();
+
+            course.setCourseID(rs.getInt("courseID"));
+            course.setCourseName(rs.getString("courseName"));
+
+            courses.put(course.getCourseName(), course);
+        }
+
+        rs.close();
+        ps.close();
+        pool.freeConnection(connection);
+
+        return courses;
+    }
 }
